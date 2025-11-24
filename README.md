@@ -1,0 +1,140 @@
+
+# ChatAndFileTransferSystem
+基于Qt的网络通信与文件传输系统
+
+## 项目简介
+本项目是一个基于Qt框架开发的网络通信与文件传输系统，实现了实时聊天、文件传输、文件分享等功能。系统采用客户端-服务器架构，支持多用户同时在线，提供了友好的图形界面。
+
+## 功能特性
+
+### 客户端功能
+- ✅ 用户登录与注册
+- ✅ 实时聊天功能
+- ✅ 文件上传与下载
+- ✅ 文件分享功能
+- ✅ 好友管理
+- ✅ 在线用户列表
+- ✅ 多界面切换
+
+### 服务器功能
+- ✅ 客户端连接管理
+- ✅ 消息转发与处理
+- ✅ 文件传输服务
+- ✅ 用户信息管理
+- ✅ 服务器状态监控
+
+## 技术栈
+
+- **开发框架**: Qt 5.14
+- **网络通信**: QTcpSocket, QTcpServer
+- **界面设计**: Qt Designer
+- **数据存储**: MySQL
+- **开发语言**: C++
+
+## 项目结构
+
+```
+├── .gitignore          # Git忽略文件配置
+├── Client/             # 客户端项目
+│   ├── Client.pro      # 客户端项目配置
+│   ├── main.cpp        # 客户端入口
+│   ├── client.cpp/h/ui # 客户端主界面
+│   ├── chat.cpp/h/ui   # 聊天功能界面
+│   ├── file.cpp/h/ui   # 文件管理界面
+│   ├── friend.cpp/h/ui # 好友管理界面
+│   ├── downloader.cpp/h # 文件下载功能
+│   ├── uploader.cpp/h   # 文件上传功能
+│   ├── sharefile.cpp/h/ui # 文件分享功能
+│   ├── onlineuser.cpp/h/ui # 在线用户列表
+│   ├── reshandler.cpp/h # 资源处理
+│   ├── protocol.cpp/h  # 通信协议定义
+│   └── images/         # 界面图片资源
+├── Server/             # 服务器项目
+│   ├── Server.pro      # 服务器项目配置
+│   ├── main.cpp        # 服务器入口
+│   ├── server.cpp/h/ui # 服务器主界面
+│   ├── mytcpserver.cpp/h # TCP服务器
+│   ├── mytcpsocket.cpp/h # TCP套接字
+│   ├── clienttask.cpp/h # 客户端任务处理
+│   ├── msghandler.cpp/h # 消息处理
+│   ├── operatedb.cpp/h # 数据库操作
+│   ├── protocol.cpp/h  # 通信协议定义
+│   └── filesys/        # 文件存储目录
+├── LICENSE             # 项目许可证
+└── README.md           # 项目说明文档
+```
+
+## 安装与运行
+
+### 环境要求
+- Qt 5.x 开发环境
+- MinGW 或 MSVC 编译器
+
+### 编译与运行
+
+#### 服务器端
+1. 打开 Qt Creator
+2. 加载 `Server/Server.pro` 项目
+3. 编译项目
+4. 运行服务器程序
+
+#### 客户端端
+1. 打开 Qt Creator
+2. 加载 `Client/Client.pro` 项目
+3. 编译项目
+4. 运行客户端程序
+
+### 手动编译 (Windows)
+
+```bash
+# 编译服务器
+cd Server
+mingw32-make debug
+
+# 编译客户端
+cd ../Client
+mingw32-make debug
+```
+
+## 使用说明
+
+### 服务器端
+1. 启动服务器程序
+2. 点击"启动服务"按钮
+3. 服务器开始监听客户端连接
+4. 可以查看在线用户和服务器状态
+
+### 客户端端
+1. 启动客户端程序
+2. 注册新账号或使用已有账号登录
+3. 登录后可以：
+   - 查看在线用户
+   - 添加好友
+   - 与好友聊天
+   - 上传和下载文件
+   - 分享文件给好友
+
+## 项目依赖
+
+- Qt 5.x Core
+- Qt 5.x Network
+- Qt 5.x Widgets
+- Qt 5.x SQL (MySQL)
+
+## 许可证
+
+本项目采用 MIT 许可证，详见 LICENSE 文件。
+
+## 开发与贡献
+
+欢迎提交 Issue 和 Pull Request 来帮助改进项目。
+
+## 更新日志
+
+### v1.0.0 (2024-12 ~ 2025-4)
+- ✅ 基本聊天功能实现
+- ✅ 文件上传下载功能
+- ✅ 用户注册登录
+- ✅ 好友管理
+- ✅ 在线用户列表
+- ✅ 文件分享功能
