@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     clienttask.cpp \
+    dbconnpool.cpp \
     main.cpp \
     msghandler.cpp \
     memorypool.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
 
 HEADERS += \
     clienttask.h \
+    dbconnpool.h \
     msghandler.h \
     memorypool.h \
     mytcpserver.h \

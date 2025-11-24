@@ -3,13 +3,13 @@
 
 #include <QObject>
 #include <QSqlDatabase>
+#include "dbconnpool.h"
 
 class OperateDB : public QObject
 {
     Q_OBJECT
 public:
 
-    QSqlDatabase m_db;
     ~OperateDB();
     void connect();
     static OperateDB& getInstance();
