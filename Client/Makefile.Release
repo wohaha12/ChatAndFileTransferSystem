@@ -1650,36 +1650,7 @@ release/chat.o: chat.cpp chat.h \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/QFile \
 		E:/QT/5.14.2/mingw73_64/include/QtNetwork/QHostAddress \
 		E:/QT/5.14.2/mingw73_64/include/QtNetwork/qhostaddress.h \
-		ui_chat.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/QVariant \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QApplication \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QLineEdit \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlineedit.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qtextcursor.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qtextformat.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qpen.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qtextoption.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qicon.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QTextEdit \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qtextedit.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qtextdocument.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout
+		ui_chat.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\chat.o chat.cpp
 
 release/downloader.o: downloader.cpp downloader.h \
@@ -1967,23 +1938,6 @@ release/file.o: file.cpp client.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qtabwidget.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qrubberband.h \
 		ui_file.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/QVariant \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QApplication \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QGridLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QListWidget \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
 		uploader.h \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/QObject \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/QCryptographicHash \
@@ -2129,25 +2083,6 @@ release/friend.o: friend.cpp friend.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qtabwidget.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qrubberband.h \
 		ui_friend.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/QVariant \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QApplication \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QListWidget \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QSpacerItem \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/QDebug \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QInputDialog \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qinputdialog.h \
@@ -2302,27 +2237,7 @@ release/index.o: index.cpp index.h \
 		friend.h \
 		chat.h \
 		onlineuser.h \
-		ui_index.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/QVariant \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/QIcon \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QApplication \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QGridLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QStackedWidget \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qstackedwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout
+		ui_index.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\index.o index.cpp
 
 release/main.o: main.cpp client.h \
@@ -2594,36 +2509,6 @@ release/client.o: client.cpp client.h \
 		E:/QT/5.14.2/mingw73_64/include/QtNetwork/QHostAddress \
 		E:/QT/5.14.2/mingw73_64/include/QtNetwork/qhostaddress.h \
 		ui_client.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/QVariant \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/QIcon \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qicon.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QApplication \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QGridLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QLabel \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlabel.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QLineEdit \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlineedit.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qtextcursor.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qtextformat.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qpen.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qtextoption.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QSpacerItem \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout \
 		memorypool.h \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/QMutex \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/QMap \
@@ -2635,6 +2520,7 @@ release/client.o: client.cpp client.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlistview.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractitemview.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractscrollarea.h \
+		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qframe.h \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/qabstractitemmodel.h \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/qitemselectionmodel.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractitemdelegate.h \
@@ -2642,6 +2528,7 @@ release/client.o: client.cpp client.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractspinbox.h \
 		E:/QT/5.14.2/mingw73_64/include/QtGui/qvalidator.h \
 		E:/QT/5.14.2/mingw73_64/include/QtCore/qregularexpression.h \
+		E:/QT/5.14.2/mingw73_64/include/QtGui/qicon.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qslider.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractslider.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qstyle.h \
@@ -2793,22 +2680,7 @@ release/onlineuser.o: onlineuser.cpp client.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qtabbar.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qtabwidget.h \
 		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qrubberband.h \
-		ui_onlineuser.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/QVariant \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/QIcon \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QApplication \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QListWidget \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h
+		ui_onlineuser.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\onlineuser.o onlineuser.cpp
 
 release/protocol.o: protocol.cpp protocol.h \
@@ -3182,26 +3054,7 @@ release/sharefile.o: sharefile.cpp client.h \
 		friend.h \
 		chat.h \
 		onlineuser.h \
-		ui_sharefile.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/QVariant \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QApplication \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qcoreapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtCore/qeventloop.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qdesktopwidget.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qguiapplication.h \
-		E:/QT/5.14.2/mingw73_64/include/QtGui/qinputmethod.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QHBoxLayout \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qboxlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qlayoutitem.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qgridlayout.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QListWidget \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QPushButton \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qpushbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/qabstractbutton.h \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QSpacerItem \
-		E:/QT/5.14.2/mingw73_64/include/QtWidgets/QVBoxLayout
+		ui_sharefile.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\sharefile.o sharefile.cpp
 
 release/uploader.o: uploader.cpp uploader.h \

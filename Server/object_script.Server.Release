@@ -1,4 +1,5 @@
 release/clienttask.o
+release/dbconnpool.o
 release/main.o
 release/msghandler.o
 release/memorypool.o
@@ -9,6 +10,7 @@ release/protocol.o
 release/server.o
 release/qrc_config.o
 release/moc_clienttask.o
+release/moc_dbconnpool.o
 release/moc_mytcpserver.o
 release/moc_mytcpsocket.o
 release/moc_operatedb.o
