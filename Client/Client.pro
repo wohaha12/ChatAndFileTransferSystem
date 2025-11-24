@@ -27,7 +27,8 @@ SOURCES += \
     protocol.cpp \
     reshandler.cpp \
     sharefile.cpp \
-    uploader.cpp
+    uploader.cpp \
+    memorypool.cpp
 
 HEADERS += \
     chat.h \
@@ -40,7 +41,8 @@ HEADERS += \
     protocol.h \
     reshandler.h \
     sharefile.h \
-    uploader.h
+    uploader.h \
+    memorypool.h
 
 FORMS += \
     chat.ui \

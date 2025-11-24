@@ -19,6 +19,7 @@ SOURCES += \
     clienttask.cpp \
     main.cpp \
     msghandler.cpp \
+    memorypool.cpp \
     mytcpserver.cpp \
     mytcpsocket.cpp \
     operatedb.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
 HEADERS += \
     clienttask.h \
     msghandler.h \
+    memorypool.h \
     mytcpserver.h \
     mytcpsocket.h \
     operatedb.h \

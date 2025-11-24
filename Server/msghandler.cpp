@@ -1,4 +1,5 @@
 #include "msghandler.h"
+#include "memorypool.h"
 #include "operatedb.h"
 #include "mytcpsocket.h"
 #include "mytcpserver.h"
@@ -270,7 +271,7 @@ PDU *MsgHandler::shareFile()
         qDebug()<<"caRecvName"<<caRecvName;
         MyTcpServer::getInstance().resend(caRecvName,resendpdu);
     }
-    free(resendpdu);
+    MemoryPool::getInstance().deallocate(resendpdu);
     resendpdu = NULL;
     PDU* respdu = mkPDU();
     respdu->uiType = ENUM_MSG_TYPE_SHARE_FILE_RESPOND;
