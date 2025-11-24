@@ -1,4 +1,5 @@
 #include "mytcpsocket.h"
+#include "memorypool.h"
 #include <QDebug>
 #include <QTcpServer>
 #include <QCoreApplication>
@@ -114,8 +115,8 @@ void MyTcpSocket::sendMsg(PDU *pdu)
         m_strDownloadFilePath.clear(); // 清空路径，避免重复发送
     }
     
-    free(pdu);
-    pdu = NULL;
+    MemoryPool::getInstance().deallocate(pdu);
+        pdu = NULL;
     
     // 发送文件数据
     if(needSendFileData){
@@ -162,7 +163,7 @@ void MyTcpSocket::sendMsg(PDU *pdu)
                 // 短暂休眠，避免网络拥塞
                 usleep(1000);
                 
-                free(dataPdu);
+                MemoryPool::getInstance().deallocate(dataPdu);
             }
             
             file.close();

@@ -1,6 +1,7 @@
 #include "mytcpserver.h"
 #include "server.h"
 #include "ui_server.h"
+#include "memorypool.h"
 
 Server::Server(QWidget *parent)
     : QWidget(parent)
@@ -8,6 +9,10 @@ Server::Server(QWidget *parent)
 {
     ui->setupUi(this);
     loadConfig();
+    
+    // 初始化内存池
+    MemoryPool::getInstance().init(4096, 100); // 4KB的内存块，100个
+    
     MyTcpServer::getInstance().listen(QHostAddress(m_strIP),m_usport);
 
 }

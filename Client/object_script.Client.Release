@@ -10,6 +10,7 @@ release/protocol.o
 release/reshandler.o
 release/sharefile.o
 release/uploader.o
+release/memorypool.o
 release/qrc_config.o
 release/qrc_images.o
 release/moc_chat.o

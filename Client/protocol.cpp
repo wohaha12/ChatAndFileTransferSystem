@@ -1,11 +1,11 @@
 #include "protocol.h"
-#include<stdlib.h>
+#include "memorypool.h"
 #include<string.h>
 PDU *mkPDU(uint uiMsgLen)
 {
     //计算总长度，申请空间
     uint uiPDULen = sizeof(PDU) + uiMsgLen;
-    PDU* pdu = (PDU*)malloc(uiPDULen);
+    PDU* pdu = (PDU*)MemoryPool::getInstance().allocate(uiPDULen);
     if(pdu == NULL){
         exit(1);
     }

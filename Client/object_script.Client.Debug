@@ -10,6 +10,7 @@ debug/protocol.o
 debug/reshandler.o
 debug/sharefile.o
 debug/uploader.o
+debug/memorypool.o
 debug/qrc_config.o
 debug/qrc_images.o
 debug/moc_chat.o

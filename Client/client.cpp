@@ -1,6 +1,7 @@
 #include "client.h"
 #include "ui_client.h"
 #include "protocol.h"
+#include "memorypool.h"
 #include "index.h"
 #include <QDebug>
 #include <QMessageBox>
@@ -9,6 +10,8 @@ Client::Client(QWidget *parent)
     , ui(new Ui::Client)
 {
     ui->setupUi(this);
+    // 初始化内存池
+    MemoryPool::getInstance().init(4096, 100);
     loadConfig();//加载配置文件
     socket.connectToHost(QHostAddress(m_strIP),m_usPort);
     //连接信号与槽函数
@@ -49,7 +52,7 @@ void Client::sendMsg(PDU *pdu)
             <<"pdu->caData"<<pdu->caData
             <<"pdu->caData+32"<<pdu->caData+32
             <<"pdu->caMsg"<<pdu->caMsg;
-    free(pdu);
+    MemoryPool::getInstance().deallocate(pdu);
     pdu = NULL;
 }
 
