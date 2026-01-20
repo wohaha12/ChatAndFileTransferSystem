@@ -1,0 +1,46 @@
+#ifndef CLIENT_NETWORK_METACONNECTION_H
+#define CLIENT_NETWORK_METACONNECTION_H
+
+#include <QObject>
+#include <QString>
+#include <QTcpSocket>
+#include <QByteArray>
+#include "../../../Common/Protocol/CommonProtocol.h"
+
+class MetaConnection : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit MetaConnection(QObject* parent = nullptr);
+    ~MetaConnection();
+
+    bool connectToServer(const QString& ip, uint16_t port);
+    void disconnect();
+
+    bool sendRequest(const TransHeader& header, const QByteArray& data);
+
+    bool isConnected() const;
+
+signals:
+    void connected();
+    void disconnected();
+    void messageReceived(const TransHeader& header, const QByteArray& data);
+    void errorOccurred(const QString& error);
+
+private slots:
+    void onConnected();
+    void onDisconnected();
+    void onReadyRead();
+    void onError(QAbstractSocket::SocketError error);
+
+private:
+    void processReceivedData();
+
+    QTcpSocket* m_socket;
+    QByteArray m_buffer;
+    QString m_ip;
+    uint16_t m_port;
+};
+
+#endif // CLIENT_NETWORK_METACONNECTION_H
