@@ -1,25 +1,22 @@
 #pragma once
-#include <string>
-#include <memory>
-#include "Common/Protocol/InternalProtocol.h"
 
-namespace storage_server {
-namespace rpc {
+#include <string>
+#include <QObject>
+#include <QTcpSocket>
+#include <QByteArray>
+
+namespace ChatSystem {
+namespace StorageServer {
+namespace RPC {
 
 /**
- * @class RPCClient
- * @brief RPC客户端，用于与MetaServer进行RPC通信
+ * @brief RPC客户端类
+ * @details 用于StorageServer向MetaServer发送RPC请求
  */
-class RPCClient {
+class RPCClient : public QObject {
+    Q_OBJECT
 public:
-    /**
-     * @brief 构造函数
-     */
-    RPCClient();
-    
-    /**
-     * @brief 析构函数
-     */
+    explicit RPCClient(QObject* parent = nullptr);
     ~RPCClient();
     
     /**
@@ -28,45 +25,95 @@ public:
      * @param port MetaServer端口
      * @return 成功返回true，失败返回false
      */
-    bool Connect(const std::string& host, uint16_t port);
+    bool connectToServer(const std::string& host, uint16_t port);
     
     /**
-     * @brief 断开与MetaServer的连接
+     * @brief 断开连接
      */
-    void Disconnect();
+    void disconnect();
     
     /**
-     * @brief 发送心跳包
-     * @param status 服务器状态
+     * @brief 是否已连接
+     * @return 已连接返回true，未连接返回false
+     */
+    bool isConnected() const;
+    
+    /**
+     * @brief 发送心跳
+     * @param serverId 存储服务器ID
+     * @param cpuUsage CPU使用率
+     * @param memoryUsage 内存使用率
+     * @param diskUsage 磁盘使用率
+     * @param connections 连接数
      * @return 成功返回true，失败返回false
      */
-    bool SendHeartbeat(const InternalProtocol::Heartbeat& status);
+    bool sendHeartbeat(uint32_t serverId, float cpuUsage, float memoryUsage, 
+                     float diskUsage, uint32_t connections);
     
     /**
-     * @brief 上报文件上传完成
-     * @param report 上传完成报告
+     * @brief 发送上传完成通知
+     * @param userId 用户ID
+     * @param fileId 文件ID
+     * @param fileHash 文件哈希
+     * @param fileSize 文件大小
+     * @param storagePath 存储路径
      * @return 成功返回true，失败返回false
      */
-    bool ReportUploadComplete(const InternalProtocol::UploadComplete& report);
+    bool sendUploadComplete(uint64_t userId, uint64_t fileId, const std::string& fileHash,
+                        uint64_t fileSize, const std::string& storagePath);
     
     /**
-     * @brief 发送服务器状态报告
-     * @param status 状态报告
+     * @brief 发送下载完成通知
+     * @param userId 用户ID
+     * @param fileId 文件ID
      * @return 成功返回true，失败返回false
      */
-    bool SendStatusReport(const InternalProtocol::StatusReport& status);
+    bool sendDownloadComplete(uint64_t userId, uint64_t fileId);
+    
+signals:
+    /**
+     * @brief 连接状态改变信号
+     * @param connected 是否已连接
+     */
+    void connectionStateChanged(bool connected);
     
     /**
-     * @brief 检查连接状态
-     * @return 连接返回true，否则返回false
+     * @brief 收到响应信号
+     * @param response 响应数据
      */
-    bool IsConnected() const;
+    void responseReceived(const QByteArray& response);
+    
+private slots:
+    /**
+     * @brief 套接字就绪读取槽函数
+     */
+    void onSocketReadyRead();
+    
+    /**
+     * @brief 套接字错误槽函数
+     * @param socketError 套接字错误
+     */
+    void onSocketError(QAbstractSocket::SocketError socketError);
+    
+    /**
+     * @brief 套接字断开槽函数
+     */
+    void onSocketDisconnected();
     
 private:
-    // 实现细节
-    class Impl;
-    std::unique_ptr<Impl> impl_;
+    /**
+     * @brief 发送RPC请求
+     * @param request 请求数据
+     * @return 成功返回true，失败返回false
+     */
+    bool sendRequest(const QByteArray& request);
+    
+private:
+    QTcpSocket* m_socket;           // TCP套接字
+    bool m_connected;                // 连接状态
+    QByteArray m_receiveBuffer;        // 接收缓冲区
 };
 
-} // namespace rpc
-} // namespace storage_server
+} // namespace RPC
+} // namespace StorageServer
+} // namespace ChatSystem

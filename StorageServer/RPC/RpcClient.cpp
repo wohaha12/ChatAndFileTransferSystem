@@ -1,72 +1,169 @@
 #include "RPCClient.h"
+#include "../../Common/Protocol/InternalProtocol.h"
+#include <iostream>
 
-namespace storage_server {
-namespace rpc {
+namespace ChatSystem {
+namespace StorageServer {
+namespace RPC {
 
-// 前向声明内部实现类
-class RPCClient::Impl {
-public:
-    Impl() = default;
-    ~Impl() = default;
+RPCClient::RPCClient(QObject* parent)
+    : QObject(parent)
+    , m_socket(nullptr)
+    , m_connected(false)
+{
+    m_socket = new QTcpSocket(this);
     
-    bool Connect(const std::string& host, uint16_t port) {
-        // 实现连接逻辑
+    connect(m_socket, &QTcpSocket::readyRead,
+            this, &RPCClient::onSocketReadyRead);
+    connect(m_socket, &QTcpSocket::errorOccurred,
+            this, &RPCClient::onSocketError);
+    connect(m_socket, &QTcpSocket::disconnected,
+            this, &RPCClient::onSocketDisconnected);
+}
+
+RPCClient::~RPCClient()
+{
+    disconnect();
+    delete m_socket;
+}
+
+bool RPCClient::connectToServer(const std::string& host, uint16_t port)
+{
+    if (m_connected) {
+        std::cerr << "已经连接到服务器" << std::endl;
         return false;
     }
     
-    void Disconnect() {
-        // 实现断开连接逻辑
-    }
+    m_socket->connectToHost(QString::fromStdString(host), port);
     
-    bool SendHeartbeat(const InternalProtocol::Heartbeat& status) {
-        // 实现发送心跳逻辑
+    if (!m_socket->waitForConnected(5000)) {
+        std::cerr << "连接服务器失败: " << m_socket->errorString().toStdString() << std::endl;
         return false;
     }
     
-    bool ReportUploadComplete(const InternalProtocol::UploadComplete& report) {
-        // 实现上报上传完成逻辑
+    m_connected = true;
+    emit connectionStateChanged(true);
+    
+    std::cout << "连接到MetaServer成功: " << host << ":" << port << std::endl;
+    return true;
+}
+
+void RPCClient::disconnect()
+{
+    if (m_socket) {
+        m_socket->disconnectFromHost();
+    }
+    
+    m_connected = false;
+    m_receiveBuffer.clear();
+    
+    emit connectionStateChanged(false);
+}
+
+bool RPCClient::isConnected() const
+{
+    return m_connected && m_socket && m_socket->state() == QAbstractSocket::ConnectedState;
+}
+
+bool RPCClient::sendHeartbeat(uint32_t serverId, float cpuUsage, float memoryUsage, 
+                            float diskUsage, uint32_t connections)
+{
+    if (!isConnected()) {
+        std::cerr << "未连接到服务器" << std::endl;
         return false;
     }
     
-    bool SendStatusReport(const InternalProtocol::StatusReport& status) {
-        // 实现发送状态报告逻辑
+    Protocol::HeartbeatRequest request;
+    request.serverId = serverId;
+    request.cpuUsage = cpuUsage;
+    request.memoryUsage = memoryUsage;
+    request.diskUsage = diskUsage;
+    request.connections = connections;
+    
+    QByteArray requestBytes(reinterpret_cast<const char*>(&request), sizeof(request));
+    
+    return sendRequest(requestBytes);
+}
+
+bool RPCClient::sendUploadComplete(uint64_t userId, uint64_t fileId, const std::string& fileHash,
+                                uint64_t fileSize, const std::string& storagePath)
+{
+    if (!isConnected()) {
+        std::cerr << "未连接到服务器" << std::endl;
         return false;
     }
     
-    bool IsConnected() const {
-        // 实现检查连接状态逻辑
+    Protocol::UploadCompleteNotification notification;
+    notification.userId = userId;
+    notification.fileId = fileId;
+    strncpy(notification.fileHash, fileHash.c_str(), sizeof(notification.fileHash) - 1);
+    notification.fileHash[sizeof(notification.fileHash) - 1] = '\0';
+    notification.fileSize = fileSize;
+    strncpy(notification.storagePath, storagePath.c_str(), sizeof(notification.storagePath) - 1);
+    notification.storagePath[sizeof(notification.storagePath) - 1] = '\0';
+    
+    QByteArray notificationBytes(reinterpret_cast<const char*>(&notification), sizeof(notification));
+    
+    return sendRequest(notificationBytes);
+}
+
+bool RPCClient::sendDownloadComplete(uint64_t userId, uint64_t fileId)
+{
+    if (!isConnected()) {
+        std::cerr << "未连接到服务器" << std::endl;
         return false;
     }
-};
-
-RPCClient::RPCClient() : impl_(std::make_unique<Impl>()) {
+    
+    Protocol::DownloadCompleteNotification notification;
+    notification.userId = userId;
+    notification.fileId = fileId;
+    
+    QByteArray notificationBytes(reinterpret_cast<const char*>(&notification), sizeof(notification));
+    
+    return sendRequest(notificationBytes);
 }
 
-RPCClient::~RPCClient() = default;
-
-bool RPCClient::Connect(const std::string& host, uint16_t port) {
-    return impl_->Connect(host, port);
+void RPCClient::onSocketReadyRead()
+{
+    QByteArray data = m_socket->readAll();
+    m_receiveBuffer.append(data);
+    
+    emit responseReceived(m_receiveBuffer);
 }
 
-void RPCClient::Disconnect() {
-    impl_->Disconnect();
+void RPCClient::onSocketError(QAbstractSocket::SocketError socketError)
+{
+    std::cerr << "套接字错误: " << socketError 
+              << " (" << m_socket->errorString().toStdString() << ")" << std::endl;
+    
+    disconnect();
 }
 
-bool RPCClient::SendHeartbeat(const InternalProtocol::Heartbeat& status) {
-    return impl_->SendHeartbeat(status);
+void RPCClient::onSocketDisconnected()
+{
+    std::cout << "与MetaServer断开连接" << std::endl;
+    
+    m_connected = false;
+    emit connectionStateChanged(false);
 }
 
-bool RPCClient::ReportUploadComplete(const InternalProtocol::UploadComplete& report) {
-    return impl_->ReportUploadComplete(report);
+bool RPCClient::sendRequest(const QByteArray& request)
+{
+    if (!isConnected()) {
+        std::cerr << "未连接到服务器" << std::endl;
+        return false;
+    }
+    
+    qint64 bytesWritten = m_socket->write(request);
+    if (bytesWritten == -1) {
+        std::cerr << "发送请求失败: " << m_socket->errorString().toStdString() << std::endl;
+        return false;
+    }
+    
+    m_socket->flush();
+    return true;
 }
 
-bool RPCClient::SendStatusReport(const InternalProtocol::StatusReport& status) {
-    return impl_->SendStatusReport(status);
-}
-
-bool RPCClient::IsConnected() const {
-    return impl_->IsConnected();
-}
-
-} // namespace rpc
-} // namespace storage_server
+} // namespace RPC
+} // namespace StorageServer
+} // namespace ChatSystem
