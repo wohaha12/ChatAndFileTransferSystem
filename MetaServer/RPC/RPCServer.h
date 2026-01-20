@@ -6,14 +6,15 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include "NotificationTracker.h"
 
 namespace ChatSystem {
 namespace MetaServer {
 namespace RPC {
 
 /**
- * @brief RPC服务器类
- * @details 用于MetaServer接收StorageServer的RPC请求
+ * @brief RPC服务器类（增强版）
+ * @details 用于MetaServer接收StorageServer的RPC请求，支持幂等性处理
  */
 class RPCServer : public QObject {
     Q_OBJECT
@@ -39,6 +40,12 @@ public:
      * @return 运行中返回true，未运行返回false
      */
     bool isRunning() const;
+    
+    /**
+     * @brief 获取通知追踪器
+     * @return 通知追踪器指针
+     */
+    NotificationTracker* getNotificationTracker();
     
 signals:
     /**
@@ -100,9 +107,17 @@ private:
      */
     void handleRequest(QTcpSocket* socket, const QByteArray& data);
     
+    /**
+     * @brief 发送响应
+     * @param socket 套接字
+     * @param success 是否成功
+     */
+    void sendResponse(QTcpSocket* socket, bool success);
+    
 private:
     QTcpServer* m_server;              // TCP服务器
     std::map<QTcpSocket*, QByteArray> m_receiveBuffers; // 接收缓冲区映射
+    NotificationTracker* m_notificationTracker;  // 通知追踪器
     mutable std::mutex m_mutex;         // 互斥锁
     bool m_running;                    // 运行状态
 };

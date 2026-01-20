@@ -129,6 +129,14 @@ private:
      */
     std::string generateUploadToken(uint64_t userId, const std::string& fileHash);
     
+    /**
+     * @brief 发送响应
+     * @param socketDescriptor 套接字描述符
+     * @param cmd 命令字
+     * @param data 响应数据
+     */
+    void sendResponse(qintptr socketDescriptor, uint32_t cmd, const QByteArray& data);
+    
 private:
     TcpServer* m_tcpServer;               // TCP服务器
     AuthModule* m_authModule;              // 认证模块
