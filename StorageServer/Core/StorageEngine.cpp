@@ -1,4 +1,12 @@
 #include "StorageEngine.h"
+#include "../../Common/Utils/HashUtil.h"
+#include <fstream>
+#include <sstream>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <iostream>
 
 namespace ChatSystem {
 namespace StorageServer {
@@ -7,69 +15,178 @@ namespace Core {
 StorageEngine::StorageEngine(QObject* parent)
     : QObject(parent)
 {
-    // 初始化
 }
 
 StorageEngine::~StorageEngine()
 {
-    // 清理资源
 }
 
 bool StorageEngine::initialize(const std::string& basePath)
 {
-    // 实现初始化存储引擎逻辑
     m_basePath = basePath;
-    return ensureDirectoryExists(basePath);
+    
+    if (!ensureDirectoryExists(basePath)) {
+        std::cerr << "创建基础存储路径失败: " << basePath << std::endl;
+        return false;
+    }
+    
+    std::cout << "存储引擎初始化成功: " << basePath << std::endl;
+    return true;
 }
 
 bool StorageEngine::writeChunk(const std::string& filePath, uint32_t chunkIndex, 
                             const QByteArray& chunkData)
 {
-    // 实现写入文件分片逻辑
-    return false;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    
+    std::string fullPath = m_basePath + "/" + filePath;
+    
+    std::string dirPath = fullPath.substr(0, fullPath.find_last_of('/'));
+    if (!ensureDirectoryExists(dirPath)) {
+        std::cerr << "创建目录失败: " << dirPath << std::endl;
+        return false;
+    }
+    
+    std::ofstream file(fullPath, std::ios::binary | std::ios::app);
+    if (!file.is_open()) {
+        std::cerr << "打开文件失败: " << fullPath << std::endl;
+        return false;
+    }
+    
+    file.seekp(chunkIndex * chunkData.size(), std::ios::beg);
+    file.write(chunkData.constData(), chunkData.size());
+    file.close();
+    
+    emit writeProgress(filePath, chunkIndex, 0);
+    return true;
 }
 
 QByteArray StorageEngine::readChunk(const std::string& filePath, uint32_t chunkIndex, 
                                  uint32_t chunkSize)
 {
-    // 实现读取文件分片逻辑
-    return QByteArray();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    
+    std::string fullPath = m_basePath + "/" + filePath;
+    
+    std::ifstream file(fullPath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "打开文件失败: " << fullPath << std::endl;
+        return QByteArray();
+    }
+    
+    file.seekg(chunkIndex * chunkSize, std::ios::beg);
+    
+    QByteArray chunkData(chunkSize, 0);
+    file.read(chunkData.data(), chunkSize);
+    
+    chunkData.resize(file.gcount());
+    file.close();
+    
+    return chunkData;
 }
 
 bool StorageEngine::createFile(const std::string& filePath, uint64_t fileSize)
 {
-    // 实现创建文件逻辑
-    return false;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    
+    std::string fullPath = m_basePath + "/" + filePath;
+    
+    std::string dirPath = fullPath.substr(0, fullPath.find_last_of('/'));
+    if (!ensureDirectoryExists(dirPath)) {
+        std::cerr << "创建目录失败: " << dirPath << std::endl;
+        return false;
+    }
+    
+    std::ofstream file(fullPath, std::ios::binary | std::ios::trunc);
+    if (!file.is_open()) {
+        std::cerr << "创建文件失败: " << fullPath << std::endl;
+        return false;
+    }
+    
+    file.seekp(fileSize - 1);
+    file.write("", 1);
+    file.close();
+    
+    std::cout << "创建文件成功: " << fullPath << " (大小: " << fileSize << " 字节)" << std::endl;
+    return true;
 }
 
 bool StorageEngine::deleteFile(const std::string& filePath)
 {
-    // 实现删除文件逻辑
-    return false;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    
+    std::string fullPath = m_basePath + "/" + filePath;
+    
+    if (unlink(fullPath.c_str()) != 0) {
+        std::cerr << "删除文件失败: " << fullPath << std::endl;
+        return false;
+    }
+    
+    std::cout << "删除文件成功: " << fullPath << std::endl;
+    return true;
 }
 
 bool StorageEngine::fileExists(const std::string& filePath) const
 {
-    // 实现检查文件是否存在逻辑
-    return false;
+    std::string fullPath = m_basePath + "/" + filePath;
+    
+    struct stat buffer;
+    return (stat(fullPath.c_str(), &buffer) == 0);
 }
 
 uint64_t StorageEngine::getFileSize(const std::string& filePath) const
 {
-    // 实现获取文件大小逻辑
-    return 0;
+    std::string fullPath = m_basePath + "/" + filePath;
+    
+    struct stat buffer;
+    if (stat(fullPath.c_str(), &buffer) != 0) {
+        std::cerr << "获取文件大小失败: " << fullPath << std::endl;
+        return 0;
+    }
+    
+    return buffer.st_size;
 }
 
 std::string StorageEngine::calculateFileHash(const std::string& filePath) const
 {
-    // 实现计算文件哈希逻辑
-    return "";
+    std::string fullPath = m_basePath + "/" + filePath;
+    
+    std::ifstream file(fullPath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "打开文件失败: " << fullPath << std::endl;
+        return "";
+    }
+    
+    std::string hash = HashUtil::calculateSHA256(file);
+    file.close();
+    
+    return hash;
 }
 
 bool StorageEngine::ensureDirectoryExists(const std::string& dirPath) const
 {
-    // 实现确保目录存在逻辑
-    return false;
+    struct stat buffer;
+    
+    if (stat(dirPath.c_str(), &buffer) == 0) {
+        if (S_ISDIR(buffer.st_mode)) {
+            return true;
+        } else {
+            std::cerr << "路径存在但不是目录: " << dirPath << std::endl;
+            return false;
+        }
+    }
+    
+    std::string parentPath = dirPath.substr(0, dirPath.find_last_of('/'));
+    if (!parentPath.empty() && !ensureDirectoryExists(parentPath)) {
+        return false;
+    }
+    
+    if (mkdir(dirPath.c_str(), 0755) != 0 && errno != EEXIST) {
+        std::cerr << "创建目录失败: " << dirPath << " (" << strerror(errno) << ")" << std::endl;
+        return false;
+    }
+    
+    return true;
 }
 
 } // namespace Core

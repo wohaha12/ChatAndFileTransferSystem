@@ -69,6 +69,20 @@ private:
      */
     std::string generateSessionToken(uint64_t userId);
     
+    /**
+     * @brief 计算密码哈希
+     * @param password 密码
+     * @param salt 盐值
+     * @return 密码哈希
+     */
+    std::string computePasswordHash(const std::string& password, const std::string& salt);
+    
+    /**
+     * @brief 生成盐值
+     * @return 盐值
+     */
+    std::string generateSalt();
+    
 private:
     DatabaseManager* m_dbManager;  // 数据库管理器
 };
