@@ -10,7 +10,7 @@
 
 ## 任务完成情况
 
-### 总体进度: 19/22 (86%)
+### 总体进度: 15/20 (75%)
 
 ### 高优先级任务: 12/12 (100% ✅)
 1. ✅ 增强内存池实现 - 迁移旧Server/memorypool到Common/Utils/MemoryPool
@@ -23,7 +23,7 @@
 8. ✅ 实现MetaServer TcpServer和ClientConnection - 基于Qt的TCP服务器
 9. ✅ 实现StorageServer Epoll TcpServer - Epoll事件循环、高并发连接处理
 10. ✅ 实现StorageEngine - 文件分片读写、二级目录存储、文件哈希计算
-11. ✅ 实现TokenValidator - Token验证、Token续期机制、过期清理（1小时过期）
+11. ✅ 实现TokenValidator - Token验证、Token续期机制、过期清理
 12. ✅ 实现RPC通信 - RPCClient、RPCServer、上传完成通知
 
 ### 中优先级任务: 4/5 (80% ⚠️)
