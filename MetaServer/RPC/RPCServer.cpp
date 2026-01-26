@@ -9,9 +9,11 @@ namespace RPC {
 RPCServer::RPCServer(QObject* parent)
     : QObject(parent)
     , m_server(nullptr)
+    , m_notificationTracker(nullptr)
     , m_running(false)
 {
     m_server = new QTcpServer(this);
+    m_notificationTracker = new NotificationTracker(this);
     
     connect(m_server, &QTcpServer::newConnection,
             this, &RPCServer::onNewConnection);
@@ -25,6 +27,10 @@ RPCServer::~RPCServer()
         delete pair.first;
     }
     m_receiveBuffers.clear();
+    
+    if (m_notificationTracker) {
+        delete m_notificationTracker;
+    }
     
     delete m_server;
 }
@@ -78,6 +84,22 @@ void RPCServer::stop()
 bool RPCServer::isRunning() const
 {
     return m_running;
+}
+
+NotificationTracker* RPCServer::getNotificationTracker()
+{
+    return m_notificationTracker;
+}
+
+void RPCServer::sendResponse(QTcpSocket* socket, bool success)
+{
+    if (!socket) {
+        return;
+    }
+    
+    uint8_t response = success ? 0x01 : 0x00;
+    socket->write(reinterpret_cast<const char*>(&response), sizeof(response));
+    socket->flush();
 }
 
 void RPCServer::onNewConnection()
@@ -176,21 +198,34 @@ void RPCServer::handleRequest(QTcpSocket* socket, const QByteArray& data)
         }
         
         case 0x02: {
-            if (data.size() < sizeof(Protocol::UploadCompleteNotification)) {
+            if (data.size() < sizeof(Protocol::UploadCompleteNotify)) {
                 return;
             }
             
-            const Protocol::UploadCompleteNotification* notification = 
-                reinterpret_cast<const Protocol::UploadCompleteNotification*>(data.constData());
+            const Protocol::UploadCompleteNotify* notification = 
+                reinterpret_cast<const Protocol::UploadCompleteNotify*>(data.constData());
             
-            std::string fileHash(notification->fileHash);
-            std::string storagePath(notification->storagePath);
+            std::string uploadToken(notification->upload_token);
             
-            emit uploadCompleteReceived(notification->userId, notification->fileId, 
-                                   fileHash, notification->fileSize, storagePath);
+            if (m_notificationTracker->isProcessed(uploadToken)) {
+                std::cout << "上传完成通知已处理（幂等性），直接返回成功: " 
+                          << uploadToken << std::endl;
+                sendResponse(socket, true);
+                return;
+            }
             
-            std::cout << "收到上传完成通知: 用户ID=" << notification->userId 
-                      << ", 文件ID=" << notification->fileId << std::endl;
+            std::string fileHash(notification->file_hash);
+            std::string storagePath(notification->storage_path);
+            
+            m_notificationTracker->markProcessed(uploadToken);
+            
+            emit uploadCompleteReceived(notification->user_id, notification->file_id, 
+                                   fileHash, notification->file_size, storagePath);
+            
+            sendResponse(socket, true);
+            
+            std::cout << "收到上传完成通知: 用户ID=" << notification->user_id 
+                      << ", 文件ID=" << notification->file_id << std::endl;
             break;
         }
         

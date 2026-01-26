@@ -80,7 +80,69 @@ void MetaServer::handleUploadRequest(qintptr socketDescriptor, const Protocol::U
 
 void MetaServer::handleDownloadRequest(qintptr socketDescriptor, const Protocol::DownloadRequest& req)
 {
-    // 实现下载请求处理逻辑
+    std::cout << "处理下载请求: 用户ID=" << req.user_id 
+              << ", 文件ID=" << req.file_id << std::endl;
+    
+    Core::FileMetaInfo fileInfo;
+    if (!m_fileMetaMgr->getFileInfo(req.file_id, fileInfo)) {
+        std::cerr << "文件不存在: 文件ID=" << req.file_id << std::endl;
+        
+        Protocol::DownloadRes res;
+        res.result_code = 2001;  // ERROR_FILE_NOT_FOUND
+        res.file_id = 0;
+        res.file_size = 0;
+        memset(res.file_hash, 0, sizeof(res.file_hash));
+        memset(res.file_name, 0, sizeof(res.file_name));
+        memset(res.storage_ip, 0, sizeof(res.storage_ip));
+        res.storage_port = 0;
+        res.chunk_size = 0;
+        res.total_chunks = 0;
+        snprintf(res.error_msg, sizeof(res.error_msg), "文件不存在");
+        
+        sendResponse(socketDescriptor, Protocol::CMD_META_DOWNLOAD_RES, res);
+        return;
+    }
+    
+    if (fileInfo.user_id != req.user_id) {
+        std::cerr << "权限不足: 用户ID=" << req.user_id 
+                  << " 无权访问文件ID=" << req.file_id 
+                  << " (文件所有者: " << fileInfo.user_id << ")" << std::endl;
+        
+        Protocol::DownloadRes res;
+        res.result_code = 2006;  // ERROR_PERMISSION_DENIED
+        res.file_id = 0;
+        res.file_size = 0;
+        memset(res.file_hash, 0, sizeof(res.file_hash));
+        memset(res.file_name, 0, sizeof(res.file_name));
+        memset(res.storage_ip, 0, sizeof(res.storage_ip));
+        res.storage_port = 0;
+        res.chunk_size = 0;
+        res.total_chunks = 0;
+        snprintf(res.error_msg, sizeof(res.error_msg), "权限不足");
+        
+        sendResponse(socketDescriptor, Protocol::CMD_META_DOWNLOAD_RES, res);
+        return;
+    }
+    
+    std::cout << "下载请求验证成功: 用户ID=" << req.user_id 
+              << ", 文件ID=" << req.file_id << std::endl;
+    
+    Protocol::DownloadRes res;
+    res.result_code = 0;  // SUCCESS
+    res.file_id = fileInfo.file_id;
+    res.file_size = fileInfo.file_size;
+    strncpy(res.file_hash, fileInfo.file_hash.c_str(), sizeof(res.file_hash) - 1);
+    res.file_hash[sizeof(res.file_hash) - 1] = '\0';
+    strncpy(res.file_name, fileInfo.file_name.c_str(), sizeof(res.file_name) - 1);
+    res.file_name[sizeof(res.file_name) - 1] = '\0';
+    strncpy(res.storage_ip, fileInfo.storage_ip.c_str(), sizeof(res.storage_ip) - 1);
+    res.storage_ip[sizeof(res.storage_ip) - 1] = '\0';
+    res.storage_port = fileInfo.storage_port;
+    res.chunk_size = req.chunk_size > 0 ? req.chunk_size : 1024 * 1024;  // 默认1MB
+    res.total_chunks = (fileInfo.file_size + res.chunk_size - 1) / res.chunk_size;
+    memset(res.error_msg, 0, sizeof(res.error_msg));
+    
+    sendResponse(socketDescriptor, Protocol::CMD_META_DOWNLOAD_RES, res);
 }
 
 void MetaServer::handleFileListRequest(qintptr socketDescriptor, uint64_t userId, uint64_t parentId)
@@ -102,6 +164,37 @@ std::string MetaServer::generateUploadToken(uint64_t userId, const std::string& 
 {
     // 实现上传令牌生成逻辑
     return "";
+}
+
+void MetaServer::sendResponse(qintptr socketDescriptor, uint32_t cmd, const QByteArray& data)
+{
+    auto it = m_connections.find(socketDescriptor);
+    if (it == m_connections.end()) {
+        std::cerr << "连接不存在: socketDescriptor=" << socketDescriptor << std::endl;
+        return;
+    }
+    
+    ClientConnection* conn = it->second;
+    if (!conn) {
+        std::cerr << "连接对象为空: socketDescriptor=" << socketDescriptor << std::endl;
+        return;
+    }
+    
+    Protocol::TransHeader header;
+    header.magic = 0x12345678;
+    header.cmd = cmd;
+    header.seq = 0;  // TODO: 使用序列号生成器
+    header.len = data.size();
+    header.checksum = 0;  // TODO: 计算CRC32校验和
+    header.reserved = 0;
+    
+    QByteArray headerBytes(reinterpret_cast<const char*>(&header), sizeof(header));
+    QByteArray fullData = headerBytes + data;
+    
+    conn->sendData(header, data);
+    
+    std::cout << "发送响应: cmd=0x" << std::hex << cmd << std::dec 
+              << ", len=" << data.size() << std::endl;
 }
 
 } // namespace Core
