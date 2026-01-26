@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QPaintEvent>
 
 namespace Ui {
 class LoginDialog;
@@ -27,7 +28,11 @@ private slots:
     void onRegisterButtonClicked();
 
 private:
-    void validateInput();
+    void setupDialog();
+    void applyStyles();
+    void setupAnimations();
+    bool validateInput();
+    void paintEvent(QPaintEvent* event) override;
 
     Ui::LoginDialog* ui;
 };

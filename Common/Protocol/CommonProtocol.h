@@ -1,11 +1,17 @@
 #ifndef COMMON_PROTOCOL_H
-#define COMMON_PROTOCOL_H
+  #define COMMON_PROTOCOL_H
 
-#include <cstdint>
-#include <cstring>
-#include <QtEndian>
+  #include <cstdint>
+  #include <cstring>
+  #include <QtEndian>
 
-#pragma pack(push, 1)
+  #ifdef _WIN32
+      #include <winsock2.h>
+  #else
+      #include <arpa/inet.h>
+  #endif
+
+  #pragma pack(push, 1)
 
 /**
  * @brief 全局错误码枚举
@@ -18,53 +24,53 @@
 enum ErrorCode : uint32_t {
     // ==================== 通用错误 (0-1000) ====================
     SUCCESS = 0,                          // 操作成功
-    ERROR_UNKNOWN = 1,                    // 未知错误
-    ERROR_INVALID_PARAM = 2,               // 参数错误
-    ERROR_NETWORK = 3,                     // 网络错误
-    ERROR_TIMEOUT = 4,                     // 超时
-    ERROR_PROTOCOL = 5,                    // 协议错误
-    ERROR_BUFFER_OVERFLOW = 6,             // 缓冲区溢出
-    ERROR_CHECKSUM_FAILED = 7,             // 校验和失败
-    ERROR_NOT_IMPLEMENTED = 8,            // 功能未实现
-    ERROR_SERVER_BUSY = 9,                 // 服务器繁忙
+    ERR_UNKNOWN = 1,                      // 未知错误
+    ERR_INVALID_PARAM = 2,                // 参数错误
+    ERR_NETWORK = 3,                      // 网络错误
+    ERR_TIMEOUT = 4,                      // 超时
+    ERR_PROTOCOL = 5,                     // 协议错误
+    ERR_BUFFER_OVERFLOW = 6,              // 缓冲区溢出
+    ERR_CHECKSUM_FAILED = 7,              // 校验和失败
+    ERR_NOT_IMPLEMENTED = 8,              // 功能未实现
+    ERR_SERVER_BUSY = 9,                  // 服务器繁忙
     
     // ==================== 认证类错误 (1001-2000) ====================
-    ERROR_AUTH_FAILED = 1001,              // 认证失败
-    ERROR_USER_NOT_FOUND = 1002,           // 用户不存在
-    ERROR_PASSWORD_WRONG = 1003,           // 密码错误
-    ERROR_TOKEN_EXPIRED = 1004,            // Token过期
-    ERROR_TOKEN_INVALID = 1005,            // Token无效
-    ERROR_PERMISSION_DENIED = 1006,        // 权限不足
-    ERROR_USER_ALREADY_EXISTS = 1007,      // 用户已存在
-    ERROR_USER_LOCKED = 1008,             // 用户被锁定
-    ERROR_SESSION_EXPIRED = 1009,          // 会话过期
-    ERROR_LOGIN_TOO_MANY = 1010,           // 登录次数过多
+    ERR_AUTH_FAILED = 1001,              // 认证失败
+    ERR_USER_NOT_FOUND = 1002,           // 用户不存在
+    ERR_PASSWORD_WRONG = 1003,           // 密码错误
+    ERR_TOKEN_EXPIRED = 1004,            // Token过期
+    ERR_TOKEN_INVALID = 1005,            // Token无效
+    ERR_PERMISSION_DENIED = 1006,        // 权限不足
+    ERR_USER_ALREADY_EXISTS = 1007,      // 用户已存在
+    ERR_USER_LOCKED = 1008,              // 用户被锁定
+    ERR_SESSION_EXPIRED = 1009,          // 会话过期
+    ERR_LOGIN_TOO_MANY = 1010,           // 登录次数过多
     
     // ==================== 业务类错误 (2001-3000) ====================
-    ERROR_FILE_NOT_FOUND = 2001,           // 文件不存在
-    ERROR_FILE_ALREADY_EXISTS = 2002,      // 文件已存在
-    ERROR_FILE_IN_USE = 2003,             // 文件正在使用
-    ERROR_FILE_TOO_LARGE = 2004,           // 文件过大
-    ERROR_DIR_NOT_FOUND = 2005,            // 目录不存在
-    ERROR_DIR_NOT_EMPTY = 2006,           // 目录非空
-    ERROR_INVALID_FILE_NAME = 2007,        // 无效文件名
-    ERROR_QUOTA_EXCEEDED = 2008,          // 配额超限
-    ERROR_FRIEND_NOT_FOUND = 2009,         // 好友不存在
-    ERROR_FRIEND_ALREADY_EXISTS = 2010,     // 好友已存在
-    ERROR_CHAT_FAILED = 2011,              // 聊天失败
-    ERROR_OPERATION_NOT_ALLOWED = 2012,     // 操作不允许
+    ERR_FILE_NOT_FOUND = 2001,           // 文件不存在
+    ERR_FILE_ALREADY_EXISTS = 2002,      // 文件已存在
+    ERR_FILE_IN_USE = 2003,              // 文件正在使用
+    ERR_FILE_TOO_LARGE = 2004,           // 文件过大
+    ERR_DIR_NOT_FOUND = 2005,            // 目录不存在
+    ERR_DIR_NOT_EMPTY = 2006,            // 目录非空
+    ERR_INVALID_FILE_NAME = 2007,        // 无效文件名
+    ERR_QUOTA_EXCEEDED = 2008,          // 配额超限
+    ERR_FRIEND_NOT_FOUND = 2009,         // 好友不存在
+    ERR_FRIEND_ALREADY_EXISTS = 2010,   // 好友已存在
+    ERR_CHAT_FAILED = 2011,             // 聊天失败
+    ERR_OPERATION_NOT_ALLOWED = 2012,   // 操作不允许
     
     // ==================== 存储类错误 (3001-4000) ====================
-    ERROR_STORAGE_FULL = 3001,             // 存储空间不足
-    ERROR_DISK_IO_ERROR = 3002,            // 磁盘IO错误
-    ERROR_STORAGE_SERVER_OFFLINE = 3003,    // 存储服务器离线
-    ERROR_CHUNK_FAILED = 3004,              // 分片失败
-    ERROR_CHUNK_MISMATCH = 3005,           // 分片不匹配
-    ERROR_FILE_CORRUPTED = 3006,          // 文件损坏
-    ERROR_NO_AVAILABLE_STORAGE = 3007,     // 无可用存储服务器
-    ERROR_UPLOAD_TOKEN_INVALID = 3008,      // 上传令牌无效
-    ERROR_UPLOAD_TIMEOUT = 3009,           // 上传超时
-    ERROR_DOWNLOAD_FAILED = 3010,           // 下载失败
+    ERR_STORAGE_FULL = 3001,            // 存储空间不足
+    ERR_DISK_IO_ERROR = 3002,           // 磁盘IO错误
+    ERR_STORAGE_SERVER_OFFLINE = 3003,  // 存储服务器离线
+    ERR_CHUNK_FAILED = 3004,            // 分片失败
+    ERR_CHUNK_MISMATCH = 3005,          // 分片不匹配
+    ERR_FILE_CORRUPTED = 3006,          // 文件损坏
+    ERR_NO_AVAILABLE_STORAGE = 3007,    // 无可用存储服务器
+    ERR_UPLOAD_TOKEN_INVALID = 3008,    // 上传令牌无效
+    ERR_UPLOAD_TIMEOUT = 3009,         // 上传超时
+    ERR_DOWNLOAD_FAILED = 3010,        // 下载失败
 };
 
 /**
@@ -188,24 +194,24 @@ struct TransHeader {
      * @brief 转换为网络字节序（大端序）
      */
     void toNetworkOrder() {
-        magic = htonl(magic);
-        cmd = htonl(cmd);
-        seq = htonl(seq);
-        len = htonl(len);
-        checksum = htonl(checksum);
-        reserved = htonl(reserved);
+        magic = qToBigEndian(magic);
+        cmd = qToBigEndian(cmd);
+        seq = qToBigEndian(seq);
+        len = qToBigEndian(len);
+        checksum = qToBigEndian(checksum);
+        reserved = qToBigEndian(reserved);
     }
     
     /**
      * @brief 转换为主机字节序
      */
     void toHostOrder() {
-        magic = ntohl(magic);
-        cmd = ntohl(cmd);
-        seq = ntohl(seq);
-        len = ntohl(len);
-        checksum = ntohl(checksum);
-        reserved = ntohl(reserved);
+        magic = qFromBigEndian(magic);
+        cmd = qFromBigEndian(cmd);
+        seq = qFromBigEndian(seq);
+        len = qFromBigEndian(len);
+        checksum = qFromBigEndian(checksum);
+        reserved = qFromBigEndian(reserved);
     }
     
     /**

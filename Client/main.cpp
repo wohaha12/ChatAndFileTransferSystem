@@ -13,8 +13,6 @@ int main(int argc, char *argv[])
     app.setOrganizationName("ChatAndFileTransferSystem");
     app.setApplicationVersion("1.0.0");
 
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
     ConfigManager configManager;
     NetworkManager networkManager;
 

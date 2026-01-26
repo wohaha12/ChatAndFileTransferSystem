@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
+#include <QCloseEvent>
+#include <QResizeEvent>
 
 class LoginDialog;
 class ChatWidget;
@@ -22,6 +24,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private slots:
     void onLoginSuccess(const QString& username, uint64_t userId);
@@ -31,7 +34,9 @@ private slots:
 
 private:
     void setupUi();
+    void applyStyles();
     void connectSignals();
+    void adjustLayoutForSize();
 
     Ui::MainWindow* ui;
     LoginDialog* m_loginDialog;

@@ -7,6 +7,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QLineEdit>
+#include <QLabel>
+#include <QPushButton>
 
 namespace Ui {
 class FileWidget;
@@ -22,6 +25,7 @@ public:
 
     void refreshFileList();
     void setCurrentPath(const QString& path);
+    void adjustForWindowSize(int width, int height);
 
 private slots:
     void onUploadButtonClicked();
@@ -29,10 +33,17 @@ private slots:
     void onDeleteButtonClicked();
     void onRenameButtonClicked();
     void onNewFolderButtonClicked();
+    void onRefreshButtonClicked();
+    void onSearchTextChanged(const QString& text);
+    void onHomeClicked();
     void onTreeItemDoubleClicked(QTreeWidgetItem* item, int column);
     void onTreeSelectionChanged();
 
 private:
+    void setupUi();
+    void applyStyles();
+    void connectSignals();
+    void addSampleFiles();
     void updateButtonStates();
 
     Ui::FileWidget* ui;

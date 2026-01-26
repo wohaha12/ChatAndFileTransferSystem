@@ -5,6 +5,8 @@
 #include <QTextEdit>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QListWidget>
+#include <QListWidgetItem>
 
 namespace Ui {
 class ChatWidget;
@@ -19,12 +21,22 @@ public:
     ~ChatWidget();
 
     void addMessage(const QString& sender, const QString& message, bool isSelf);
+    void adjustForWindowSize(int width, int height);
 
 private slots:
     void onSendButtonClicked();
     void onMessageTextChanged();
+    void onFriendClicked(QListWidgetItem* item);
+    void onAddFriendClicked();
+    void onMoreOptionsClicked();
+    void onEmojiButtonClicked();
 
 private:
+    void setupUi();
+    void applyStyles();
+    void connectSignals();
+    void addSampleFriends();
+
     Ui::ChatWidget* ui;
 };
 

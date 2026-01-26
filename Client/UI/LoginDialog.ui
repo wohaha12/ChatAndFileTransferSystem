@@ -6,14 +6,59 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>420</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>用户登录</string>
   </property>
+  <property name="windowFlags">
+   <set>Qt::FramelessWindowHint</set>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>20</number>
+   </property>
+   <property name="leftMargin">
+    <number>40</number>
+   </property>
+   <property name="topMargin">
+    <number>40</number>
+   </property>
+   <property name="rightMargin">
+    <number>40</number>
+   </property>
+   <property name="bottomMargin">
+    <number>40</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="logoLabel">
+     <property name="minimumSize">
+      <size>
+       <width>80</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>💬</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>48</pointsize>
+      </font>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QLabel" name="titleLabel">
      <property name="text">
@@ -24,16 +69,19 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
+       <pointsize>18</pointsize>
        <weight>75</weight>
       </font>
      </property>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer name="verticalSpacer_4">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
@@ -44,6 +92,19 @@
     </spacer>
    </item>
    <item>
+    <widget class="QLabel" name="usernameLabel">
+     <property name="text">
+      <string>用户名</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+      </font>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLineEdit" name="usernameLineEdit">
      <property name="placeholderText">
       <string>请输入用户名</string>
@@ -51,17 +112,17 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QLabel" name="passwordLabel">
+     <property name="text">
+      <string>密码</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+      </font>
      </property>
-    </spacer>
+    </widget>
    </item>
    <item>
     <widget class="QLineEdit" name="passwordLineEdit">
@@ -74,14 +135,17 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_3">
+    <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>20</height>
+       <height>10</height>
       </size>
      </property>
     </spacer>
@@ -92,17 +156,28 @@
       <string>登录</string>
      </property>
      <property name="minimumHeight">
-      <number>40</number>
+      <number>48</number>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+      </font>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="registerButton">
      <property name="text">
-      <string>注册</string>
+      <string>注册账号</string>
      </property>
      <property name="minimumHeight">
-      <number>40</number>
+      <number>48</number>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
      </property>
     </widget>
    </item>
@@ -110,17 +185,5 @@
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>loginButton</sender>
-   <signal>clicked()</signal>
-   <receiver>LoginDialog</receiver>
-   <slot>onLoginButtonClicked()</slot>
-  </connection>
-  <connection>
-   <sender>registerButton</sender>
-   <signal>clicked()</signal>
-   <receiver>LoginDialog</receiver>
-   <slot>onRegisterButtonClicked()</slot>
-  </connection>
  </connections>
 </ui>

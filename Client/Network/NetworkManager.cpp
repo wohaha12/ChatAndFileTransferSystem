@@ -22,7 +22,7 @@ bool NetworkManager::connectToMetaServer(const QString& ip, uint16_t port)
 
     m_metaSocket = new QTcpSocket(this);
 
-    connect(m_metaSocket, &QTcpSocket::connected, this, [this]() {
+    connect(m_metaSocket, &QTcpSocket::connected, this, [this, ip, port]() {
         emit metaServerConnectionChanged(true);
         qDebug() << "Connected to Meta server:" << ip << ":" << port;
     });
@@ -49,7 +49,7 @@ bool NetworkManager::connectToStorageServer(const QString& ip, uint16_t port)
 
     m_storageSocket = new QTcpSocket(this);
 
-    connect(m_storageSocket, &QTcpSocket::connected, this, [this]() {
+    connect(m_storageSocket, &QTcpSocket::connected, this, [this, ip, port]() {
         emit storageServerConnectionChanged(true);
         qDebug() << "Connected to Storage server:" << ip << ":" << port;
     });

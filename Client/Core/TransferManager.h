@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QString>
 #include <QAtomicInt>
-#include <QAtomicBool>
 #include <QTimer>
 #include "../Network/NetworkManager.h"
 #include "FileWorker.h"
@@ -21,7 +20,6 @@ public:
 
     void requestUpload(const QString& filePath, const QString& parentPath);
     void requestDownload(uint64_t fileId, const QString& savePath);
-
     bool isTransferring() const;
     qint64 getTransferSpeed() const;
 
@@ -43,7 +41,7 @@ private:
     NetworkManager* m_networkManager;
     FileWorker* m_fileWorker;
     QThread* m_workerThread;
-    QAtomicBool m_isTransferring;
+    QAtomicInt m_isTransferring;
     QAtomicInt m_activeTransfers;
     QTimer* m_speedTimer;
     qint64 m_lastBytesTransferred;

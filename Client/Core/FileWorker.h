@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QString>
 #include <QAtomicInt>
-#include <QAtomicBool>
 #include <QMutex>
 #include <QWaitCondition>
 #include <QTimer>
@@ -22,7 +21,7 @@ enum TransferState {
     State_Transferring,       // 传输中
     State_Paused,             // 已暂停
     State_Finished,           // 已完成
-    State_Error                // 错误
+    State_Error               // 错误
 };
 
 class FileWorker : public QObject
@@ -68,9 +67,9 @@ private:
     uint16_t m_storagePort;
     QAtomicInt m_nextChunkIndex;
     QAtomicInt m_transferredBytes;
-    QAtomicBool m_isUploading;
-    QAtomicBool m_shouldStop;
-    QAtomicBool m_isPaused;
+    QAtomicInt m_isUploading;
+    QAtomicInt m_shouldStop;
+    QAtomicInt m_isPaused;
     TransferState m_state;
     QMutex m_mutex;
     QWaitCondition m_waitCondition;

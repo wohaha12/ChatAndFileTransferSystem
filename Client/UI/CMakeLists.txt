@@ -16,6 +16,8 @@ set(SOURCES
     LoginDialog.cpp
     ChatWidget.cpp
     FileWidget.cpp
+    StyleManager.cpp
+    AnimationManager.cpp
 )
 
 set(HEADERS
@@ -23,6 +25,8 @@ set(HEADERS
     LoginDialog.h
     ChatWidget.h
     FileWidget.h
+    StyleManager.h
+    AnimationManager.h
 )
 
 set(UI_FILES
