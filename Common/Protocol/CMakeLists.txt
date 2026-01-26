@@ -1,24 +1,8 @@
-# Protocol模块的CMakeLists.txt
+cmake_minimum_required(VERSION 3.16)
+project(Protocol)
 
-# 设置模块名称
-set(MODULE_NAME Protocol)
+add_library(${PROJECT_NAME} INTERFACE)
 
-# 定义源文件
-set(HEADERS
-    TransHeader.h
-    CommandTypes.h
-    ClientProtocol.h
-    InternalProtocol.h
-)
+target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-# 添加头文件到库
-add_library(${MODULE_NAME} INTERFACE)
-
-# 设置库的包含目录
-target_include_directories(${MODULE_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-
-# 依赖项
-# target_link_libraries(${MODULE_NAME} INTERFACE ...)
-
-# 输出信息
-message(STATUS "Added module: ${MODULE_NAME}")
+message(STATUS "Protocol module configured")

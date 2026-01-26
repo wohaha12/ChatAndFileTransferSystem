@@ -1,24 +1,28 @@
-# Utils模块的CMakeLists.txt
+cmake_minimum_required(VERSION 3.16)
+project(Utils)
 
-# 设置模块名称
-set(MODULE_NAME Utils)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 定义源文件
 set(HEADERS
     HashUtil.h
     StringUtil.h
     FileUtil.h
     TimeUtil.h
+    PathUtil.h
+    MemoryPool.h
 )
 
-# 添加头文件到库
-add_library(${MODULE_NAME} INTERFACE)
+set(SOURCES
+    PathUtil.cpp
+    MemoryPool.cpp
+)
 
-# 设置库的包含目录
-target_include_directories(${MODULE_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCES}
+    ${HEADERS}
+)
 
-# 依赖项
-# target_link_libraries(${MODULE_NAME} INTERFACE ...)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# 输出信息
-message(STATUS "Added module: ${MODULE_NAME}")
+message(STATUS "Utils module configured")

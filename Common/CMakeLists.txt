@@ -1,20 +1,16 @@
-# Common模块的CMakeLists.txt
+cmake_minimum_required(VERSION 3.16)
+project(Common VERSION 1.0.0 LANGUAGES CXX)
 
-# 设置模块名称
-set(MODULE_NAME Common)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 添加子目录
 add_subdirectory(Protocol)
 add_subdirectory(Utils)
 
-# 添加头文件到库
-add_library(${MODULE_NAME} INTERFACE)
+add_library(${PROJECT_NAME} INTERFACE)
 
-# 设置库的包含目录
-target_include_directories(${MODULE_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-# 链接子模块
-target_link_libraries(${MODULE_NAME} INTERFACE Protocol Utils)
+target_link_libraries(${PROJECT_NAME} INTERFACE Protocol Utils)
 
-# 输出信息
-message(STATUS "Added module: ${MODULE_NAME}")
+message(STATUS "Common module configured")

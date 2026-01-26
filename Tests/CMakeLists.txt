@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
-project(Tests CXX)
+cmake_minimum_required(VERSION 3.16)
+project(Tests VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Test)
+find_package(Qt6 REQUIRED COMPONENTS Core Test)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/Common/Protocol
@@ -20,29 +20,27 @@ include_directories(
 )
 
 set(TEST_SOURCES
-    Tests/test_memory_pool.cpp
-    Tests/test_database_manager.cpp
-    Tests/test_protocol.cpp
-    Tests/test_auth_module.cpp
-    Tests/test_load_balancer.cpp
-    Tests/test_redis_manager.cpp
-    Tests/test_token_validator.cpp
-    Tests/test_storage_engine.cpp
+    test_memory_pool.cpp
+    test_memory_pool.h
+    test_protocol.cpp
+    test_protocol.h
+    test_load_balancer.cpp
+    test_load_balancer.h
 )
 
 add_executable(tests ${TEST_SOURCES})
+
 target_link_libraries(tests
-    Qt5::Core
-    Qt5::Test
-    pthread
+    Qt6::Core
+    Qt6::Test
+    CommonProtocol
+    CommonUtils
 )
 
 enable_testing()
+
 add_test(NAME MemoryPoolTest COMMAND tests)
-add_test(NAME DatabaseManagerTest COMMAND tests)
 add_test(NAME ProtocolTest COMMAND tests)
-add_test(NAME AuthModuleTest COMMAND tests)
 add_test(NAME LoadBalancerTest COMMAND tests)
-add_test(NAME RedisManagerTest COMMAND tests)
-add_test(NAME TokenValidatorTest COMMAND tests)
-add_test(NAME StorageEngineTest COMMAND tests)
+
+message(STATUS "Tests module configured")

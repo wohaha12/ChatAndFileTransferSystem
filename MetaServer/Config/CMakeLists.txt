@@ -1,9 +1,15 @@
-# Config模块的CMakeLists.txt
+cmake_minimum_required(VERSION 3.16)
+project(MetaServerConfig)
 
-# 设置模块名称
-set(MODULE_NAME Config)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 定义源文件
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Core)
+
 set(HEADERS
     ServerConfig.h
 )
@@ -12,14 +18,18 @@ set(SOURCES
     ServerConfig.cpp
 )
 
-# 添加库
-add_library(${MODULE_NAME} STATIC ${HEADERS} ${SOURCES})
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCES}
+    ${HEADERS}
+)
 
-# 设置库的包含目录
-target_include_directories(${MODULE_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(${PROJECT_NAME}
+    Qt6::Core
+)
 
-# 依赖项
-# target_link_libraries(${MODULE_NAME} PRIVATE ...)
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
-# 输出信息
-message(STATUS "Added module: ${MODULE_NAME}")
+message(STATUS "MetaServerConfig module configured")

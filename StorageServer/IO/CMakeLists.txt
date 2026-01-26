@@ -1,34 +1,32 @@
-# StorageServer IO模块CMakeLists.txt
+cmake_minimum_required(VERSION 3.16)
+project(StorageServerIO)
 
-# 源文件列表
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(IO_SOURCES
     FileReader.cpp
     FileWriter.cpp
     ChunkManager.cpp
 )
 
-# 头文件列表
 set(IO_HEADERS
     FileReader.h
     FileWriter.h
     ChunkManager.h
 )
 
-# 创建静态库
-add_library(storage_server_io STATIC ${IO_SOURCES} ${IO_HEADERS})
+add_library(${PROJECT_NAME} STATIC ${IO_SOURCES} ${IO_HEADERS})
 
-# 设置库的输出名称
-set_target_properties(storage_server_io PROPERTIES OUTPUT_NAME "storage_server_io")
-
-# 包含头文件目录
-target_include_directories(storage_server_io PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Common
 )
 
-# 链接依赖库
-target_link_libraries(storage_server_io
-    common_utils
+target_link_libraries(${PROJECT_NAME}
+    CommonUtils
     Threads::Threads
 )
+
+message(STATUS "StorageServerIO module configured")
