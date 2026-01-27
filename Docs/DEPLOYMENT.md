@@ -1,6 +1,6 @@
 # 部署指南
 
-本文档详细说明如何在不同环境中部署ChatAndFileTransferSystem项目。
+本文档详细说明如何在不同环境中部署 ChatAndFileTransferSystem 项目。
 
 ## 目录
 
@@ -37,11 +37,11 @@
 
 ### 网络拓扑
 
-- **Client**: 用户终端，连接到MetaServer
+- **Client**: 用户终端，连接到 MetaServer
 - **MetaServer**: 控制服务器，管理用户、文件元数据、负载均衡
 - **StorageServer**: 存储服务器，负责文件存储和传输
 - **MySQL**: 存储用户、文件、好友等元数据
-- **Redis**: 缓存Token、会话信息、在线用户列表
+- **Redis**: 缓存 Token、会话信息、在线用户列表
 
 ## 环境准备
 
@@ -79,6 +79,8 @@
 - **MySQL**: 8.0+
 - **Redis**: 6.0+
 - **Qt**: 6.2+ (仅客户端和MetaServer）
+- **CMake**: 3.16+
+- **C++编译器**: GCC 7.3+, MSVC 2019+, Clang 5.0+
 
 ## 数据库部署
 
@@ -89,7 +91,6 @@
 ```bash
 sudo apt update
 sudo apt install -y mysql-server mysql-client
-
 # 安全配置
 sudo mysql_secure_installation
 ```
@@ -98,7 +99,6 @@ sudo mysql_secure_installation
 
 ```bash
 sudo yum install -y mysql-server mysql
-
 # 启动MySQL服务
 sudo systemctl start mysqld
 sudo systemctl enable mysqld
@@ -192,7 +192,6 @@ sudo apt install -y redis-server
 
 ```bash
 sudo yum install -y redis
-
 # 启动Redis服务
 sudo systemctl start redis
 sudo systemctl enable redis
@@ -201,7 +200,7 @@ sudo systemctl enable redis
 #### Windows
 
 1. 下载Redis for Windows: https://github.com/microsoftarchive/redis/releases
-2. 解压到指定目录
+2. 解压到目标目录
 3. 运行 `redis-server.exe`
 
 ### 配置Redis
@@ -215,6 +214,9 @@ bind 0.0.0.0
 # 端口
 port 6379
 
+# 密码（生产环境必须设置）
+requirepass your_redis_password
+
 # 最大内存
 maxmemory 2gb
 
@@ -225,12 +227,6 @@ maxmemory-policy allkeys-lru
 save 900 1
 save 300 10
 save 60 10000
-
-# 日志级别
-loglevel notice
-
-# 日志文件
-logfile /var/log/redis/redis-server.log
 ```
 
 重启Redis服务：
@@ -239,166 +235,111 @@ logfile /var/log/redis/redis-server.log
 sudo systemctl restart redis
 ```
 
-### 验证Redis
+## 服务器部署
+
+### 构建系统
+
+#### 安装CMake
 
 ```bash
-redis-cli ping
-# 应该返回: PONG
+# Ubuntu/Debian
+sudo apt install -y cmake
 
-redis-cli info
-# 查看Redis信息
+# CentOS/RHEL
+sudo yum install -y cmake
+
+# Windows
+# 下载并安装 CMake: https://cmake.org/download/
 ```
 
-## 服务器部署
+#### 安装Qt6
+
+```bash
+# Ubuntu/Debian
+sudo apt install -y qt6-base-dev qt6-network-dev qt6-sql-dev
+
+# CentOS/RHEL
+sudo yum install -y qt6-qtbase-devel qt6-qtnetwork-devel qt6-qtsql-devel
+
+# Windows
+# 下载并安装 Qt6: https://www.qt.io/download-qt-installer
+```
+
+### 编译项目
+
+```bash
+# 克隆项目
+git clone <repository-url>
+cd ChatAndFileTransferSystem
+
+# 创建构建目录
+mkdir build && cd build
+
+# 配置CMake
+cmake .. -DCMAKE_BUILD_TYPE=Release
+
+# 编译
+cmake --build . --config Release -j$(nproc)
+```
 
 ### 部署MetaServer
 
-#### 1. 构建项目
-
 ```bash
-# 使用构建脚本
-./Scripts/build.sh
+# 复制可执行文件
+cp bin/MetaServer /opt/chat/MetaServer
 
-# 或者手动构建
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
-```
+# 复制配置文件
+cp config/meta_server.conf /opt/chat/config/
 
-#### 2. 配置MetaServer
+# 创建日志目录
+mkdir -p /var/log/chat
 
-编辑 `Config/metaserver.conf`：
-
-```ini
-[Network]
-host=0.0.0.0
-port=8000
-max_connections=1000
-
-[Database]
-host=localhost
-port=3306
-database=chat_file_transfer
-username=chatapp
-password=your_password
-pool_size=10
-timeout=5
-
-[Redis]
-host=localhost
-port=6379
-password=
-db=0
-timeout=5
-```
-
-#### 3. 部署MetaServer
-
-```bash
-# 使用部署脚本
-./Scripts/deploy.sh
-
-# 或者手动部署
-mkdir -p /opt/chatfiletransfer/metaserver/{bin,config,logs,data}
-cp build/bin/MetaServer /opt/chatfiletransfer/metaserver/bin/
-cp Config/metaserver.conf /opt/chatfiletransfer/metaserver/config/
-```
-
-#### 4. 创建systemd服务（Linux）
-
-创建 `/etc/systemd/system/metaserver.service`：
-
-```ini
-[Unit]
-Description=ChatAndFileTransfer MetaServer
-After=network.target mysql.service redis.service
-
-[Service]
-Type=simple
-User=chatapp
-Group=chatapp
-WorkingDirectory=/opt/chatfiletransfer/metaserver
-ExecStart=/opt/chatfiletransfer/metaserver/bin/MetaServer -c /opt/chatfiletransfer/metaserver/config/metaserver.conf
-Restart=on-failure
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-启动服务：
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl start metaserver
-sudo systemctl enable metaserver
-sudo systemctl status metaserver
+# 设置权限
+chmod +x /opt/chat/MetaServer
+chown -R chat:chat /opt/chat
 ```
 
 ### 部署StorageServer
 
-#### 1. 构建项目
+```bash
+# 复制可执行文件
+cp bin/StorageServer /opt/chat/StorageServer
+
+# 复制配置文件
+cp config/storage_server.conf /opt/chat/config/
+
+# 创建存储目录
+mkdir -p /data/chat/storage
+
+# 设置权限
+chmod +x /opt/chat/StorageServer
+chown -R chat:chat /opt/chat
+```
+
+### 启动服务
 
 ```bash
-# 使用构建脚本
-./Scripts/build.sh
+# 启动MetaServer
+/opt/chat/MetaServer /opt/chat/config/meta_server.conf
 
-# 或者手动构建
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
+# 启动StorageServer
+/opt/chat/StorageServer /opt/chat/config/storage_server.conf
 ```
 
-#### 2. 配置StorageServer
+### 配置systemd服务
 
-编辑 `Config/storageserver.conf`：
-
-```ini
-[Network]
-host=0.0.0.0
-port=9001
-max_connections=1000
-
-[MetaServer]
-host=metaserver_ip
-port=8000
-heartbeat_interval=30
-
-[Storage]
-storage_path=/opt/chatfiletransfer/storageserver/storage
-temp_path=/opt/chatfiletransfer/storageserver/temp
-chunk_size=1048576
-max_file_size=10737418240
-disk_usage_threshold=90
-```
-
-#### 3. 部署StorageServer
-
-```bash
-# 使用部署脚本
-./Scripts/deploy.sh
-
-# 或者手动部署
-mkdir -p /opt/chatfiletransfer/storageserver/{bin,config,logs,data/{storage,temp}}
-cp build/bin/StorageServer /opt/chatfiletransfer/storageserver/bin/
-cp Config/storageserver.conf /opt/chatfiletransfer/storageserver/config/
-```
-
-#### 4. 创建systemd服务（Linux）
-
-创建 `/etc/systemd/system/storageserver.service`：
+创建 `/etc/systemd/system/chat-meta.service`:
 
 ```ini
 [Unit]
-Description=ChatAndFileTransfer StorageServer
-After=network.target
+Description=Chat Meta Server
+After=network.target mysql.service redis.service
 
 [Service]
 Type=simple
-User=chatapp
-Group=chatapp
-WorkingDirectory=/opt/chatfiletransfer/storageserver
-ExecStart=/opt/chatfiletransfer/storageserver/bin/StorageServer -c /opt/chatfiletransfer/storageserver/config/storageserver.conf
+User=chat
+WorkingDirectory=/opt/chat
+ExecStart=/opt/chat/MetaServer /opt/chat/config/meta_server.conf
 Restart=on-failure
 RestartSec=10
 
@@ -406,83 +347,74 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
-启动服务：
+创建 `/etc/systemd/system/chat-storage.service`:
+
+```ini
+[Unit]
+Description=Chat Storage Server
+After=network.target
+
+[Service]
+Type=simple
+User=chat
+WorkingDirectory=/opt/chat
+ExecStart=/opt/chat/StorageServer /opt/chat/config/storage_server.conf
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+启用服务：
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl start storageserver
-sudo systemctl enable storageserver
-sudo systemctl status storageserver
-```
-
-#### 5. 注册StorageServer到MetaServer
-
-在MySQL中插入StorageServer记录：
-
-```sql
-INSERT INTO t_storage_server (server_name, ip_address, port, status, capacity_total, capacity_used, weight)
-VALUES ('StorageServer1', 'storage_server_ip', 9001, 1, 107374182400, 0, 1);
+sudo systemctl enable chat-meta
+sudo systemctl enable chat-storage
+sudo systemctl start chat-meta
+sudo systemctl start chat-storage
 ```
 
 ## 客户端部署
 
 ### Windows客户端
 
-#### 1. 构建项目
+1. 下载客户端安装程序
+2. 运行安装程序，按照向导完成安装
+3. 启动客户端，配置服务器地址
 
-```cmd
-Scripts\build.bat
-```
-
-#### 2. 打包客户端
-
-```cmd
-Scripts\deploy.bat
-```
-
-#### 3. 安装客户端
-
-1. 将 `deploy` 目录复制到目标机器
-2. 运行 `deploy\bin\Client.exe`
-3. 配置 `Config\client.conf`
-
-### Linux/macOS客户端
-
-#### 1. 构建项目
+### Linux客户端
 
 ```bash
-./Scripts/build.sh
-```
-
-#### 2. 打包客户端
-
-```bash
-./Scripts/deploy.sh
-```
-
-#### 3. 安装客户端
-
-```bash
-# 复制到目标目录
-cp -r deploy /opt/chatfiletransfer/client
+# 解压客户端包
+tar -xzf ChatClient-linux.tar.gz
 
 # 运行客户端
-/opt/chatfiletransfer/client/bin/Client
+./ChatClient
+```
+
+### macOS客户端
+
+```bash
+# 解压客户端包
+unzip ChatClient-macos.zip
+
+# 运行客户端
+open ChatClient.app
 ```
 
 ## 生产环境部署
 
-### 高可用部署
+### 负载均衡
 
-#### 多MetaServer部署
-
-使用负载均衡器（如Nginx）部署多个MetaServer实例：
+使用 Nginx 作为负载均衡器：
 
 ```nginx
-upstream metaserver {
-    server metaserver1:8000;
-    server metaserver2:8000;
-    server metaserver3:8000;
+upstream meta_servers {
+    server meta1.example.com:8080 weight=3;
+    server meta2.example.com:8080 weight=2;
+    server meta3.example.com:8080 weight=1;
 }
 
 server {
@@ -490,251 +422,117 @@ server {
     server_name chat.example.com;
 
     location / {
-        proxy_pass http://metaserver;
+        proxy_pass http://meta_servers;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 ```
 
-#### 多StorageServer部署
+### SSL/TLS配置
 
-部署多个StorageServer实例，并在MySQL中注册：
+```nginx
+server {
+    listen 443 ssl;
+    server_name chat.example.com;
 
-```sql
-INSERT INTO t_storage_server (server_name, ip_address, port, status, capacity_total, capacity_used, weight)
-VALUES 
-('StorageServer1', '192.168.1.101', 9001, 1, 107374182400, 0, 1),
-('StorageServer2', '192.168.1.102', 9002, 1, 107374182400, 0, 1),
-('StorageServer3', '192.168.1.103', 9003, 1, 107374182400, 0, 1);
+    ssl_certificate /etc/ssl/certs/chat.example.com.crt;
+    ssl_certificate_key /etc/ssl/private/chat.example.com.key;
+
+    location / {
+        proxy_pass http://meta_servers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
 ```
 
-### 数据库主从复制
-
-#### 配置MySQL主从复制
-
-**主库配置** (`/etc/mysql/mysql.conf.d/mysqld.cnf`):
-
-```ini
-[mysqld]
-server-id = 1
-log-bin = mysql-bin
-binlog-format = ROW
-binlog-do-db = chat_file_transfer
-```
-
-**从库配置** (`/etc/mysql/mysql.conf.d/mysqld.cnf`):
-
-```ini
-[mysqld]
-server-id = 2
-relay-log = mysql-relay-bin
-read-only = 1
-```
-
-**创建复制用户**（在主库上执行）：
-
-```sql
-CREATE USER 'repl'@'%' IDENTIFIED BY 'replication_password';
-GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
-FLUSH PRIVILEGES;
-```
-
-**启动复制**（在从库上执行）：
-
-```sql
-CHANGE MASTER TO
-  MASTER_HOST='master_ip',
-  MASTER_USER='repl',
-  MASTER_PASSWORD='replication_password',
-  MASTER_LOG_FILE='mysql-bin.000001',
-  MASTER_LOG_POS=154;
-
-START SLAVE;
-```
-
-### Redis哨兵模式
-
-#### 配置Redis哨兵
-
-创建 `/etc/redis/sentinel.conf`：
-
-```ini
-port 26379
-sentinel monitor mymaster 127.0.0.1 6379 2
-sentinel down-after-milliseconds mymaster 5000
-sentinel parallel-syncs mymaster 1
-sentinel failover-timeout mymaster 10000
-```
-
-启动哨兵：
+### 防火墙配置
 
 ```bash
-redis-sentinel /etc/redis/sentinel.conf
+# 开放MySQL端口
+sudo ufw allow 3306/tcp
+
+# 开放Redis端口
+sudo ufw allow 6379/tcp
+
+# 开放MetaServer端口
+sudo ufw allow 8080/tcp
+
+# 开放StorageServer端口
+sudo ufw allow 8081/tcp
 ```
 
 ## 监控与维护
 
-### 日志管理
+### 日志查看
 
-#### 日志位置
+```bash
+# 查看MetaServer日志
+tail -f /var/log/chat/meta_server.log
 
-- **MetaServer**: `/opt/chatfiletransfer/metaserver/logs/metaserver.log`
-- **StorageServer**: `/opt/chatfiletransfer/storageserver/logs/storageserver.log`
-- **MySQL**: `/var/log/mysql/`
-- **Redis**: `/var/log/redis/`
+# 查看StorageServer日志
+tail -f /var/log/chat/storage_server.log
 
-#### 日志轮转
-
-创建 `/etc/logrotate.d/chatfiletransfer`：
-
-```
-/opt/chatfiletransfer/metaserver/logs/*.log {
-    daily
-    rotate 7
-    compress
-    delaycompress
-    missingok
-    notifempty
-    create 0640 chatapp chatapp
-}
-
-/opt/chatfiletransfer/storageserver/logs/*.log {
-    daily
-    rotate 7
-    compress
-    delaycompress
-    missingok
-    notifempty
-    create 0640 chatapp chatapp
-}
+# 查看MySQL慢查询日志
+tail -f /var/log/mysql/slow-query.log
 ```
 
 ### 性能监控
 
-#### 使用Prometheus + Grafana
-
-1. 安装Prometheus:
-
-```bash
-sudo apt install -y prometheus
-```
-
-2. 配置Prometheus (`/etc/prometheus/prometheus.yml`):
+使用 Prometheus + Grafana 进行监控：
 
 ```yaml
-global:
-  scrape_interval: 15s
-
+# prometheus.yml
 scrape_configs:
-  - job_name: 'metaserver'
+  - job_name: 'chat-meta'
     static_configs:
-      - targets: ['localhost:8000']
-  - job_name: 'storageserver'
+      - targets: ['localhost:9090']
+  - job_name: 'chat-storage'
     static_configs:
-      - targets: ['localhost:9001']
-```
-
-3. 安装Grafana:
-
-```bash
-sudo apt install -y grafana
-sudo systemctl start grafana-server
-sudo systemctl enable grafana-server
+      - targets: ['localhost:9091']
 ```
 
 ### 备份策略
 
-#### 数据库备份
-
-创建备份脚本 `/opt/chatfiletransfer/scripts/backup_db.sh`：
-
 ```bash
-#!/bin/bash
-BACKUP_DIR="/opt/chatfiletransfer/backups"
-DATE=$(date +%Y%m%d_%H%M%S)
-mysqldump -u chatapp -p'your_password' chat_file_transfer > $BACKUP_DIR/chat_file_transfer_$DATE.sql
-find $BACKUP_DIR -name "chat_file_transfer_*.sql" -mtime +7 -delete
-```
+# MySQL备份
+mysqldump -u chatapp -p chat_file_transfer > backup_$(date +%Y%m%d).sql
 
-添加到crontab：
+# Redis备份
+redis-cli --rdb /backup/redis_$(date +%Y%m%d).rdb
 
-```bash
-# 每天凌晨2点备份
-0 2 * * * /opt/chatfiletransfer/scripts/backup_db.sh
-```
-
-#### 文件备份
-
-```bash
-#!/bin/bash
-BACKUP_DIR="/opt/chatfiletransfer/backups/storage"
-DATE=$(date +%Y%m%d_%H%M%S)
-rsync -avz --delete /opt/chatfiletransfer/storageserver/storage/ $BACKUP_DIR/storage_$DATE/
-find $BACKUP_DIR -type d -name "storage_*" -mtime +7 -exec rm -rf {} \;
+# 文件备份
+rsync -avz /data/chat/storage/ /backup/storage/
 ```
 
 ### 故障排查
 
-#### MetaServer无法启动
+```bash
+# 检查服务状态
+sudo systemctl status chat-meta
+sudo systemctl status chat-storage
 
-1. 检查日志：`journalctl -u metaserver -n 50`
-2. 检查配置文件：`cat /opt/chatfiletransfer/metaserver/config/metaserver.conf`
-3. 检查数据库连接：`mysql -u chatapp -p -h localhost`
-4. 检查Redis连接：`redis-cli ping`
+# 检查端口监听
+sudo netstat -tlnp | grep -E '8080|8081'
 
-#### StorageServer无法启动
+# 检查连接数
+sudo netstat -an | grep ESTABLISHED | wc -l
+```
 
-1. 检查日志：`journalctl -u storageserver -n 50`
-2. 检查配置文件：`cat /opt/chatfiletransfer/storageserver/config/storageserver.conf`
-3. 检查磁盘空间：`df -h`
-4. 检查端口占用：`netstat -tlnp | grep 9001`
+## 总结
 
-#### 客户端无法连接
+本文档详细描述了聊天与文件传输系统的部署流程，主要包含以下内容：
 
-1. 检查网络连接：`ping metaserver_ip`
-2. 检查防火墙规则：`sudo iptables -L`
-3. 检查MetaServer状态：`sudo systemctl status metaserver`
+1. **部署架构**: 系统架构和网络拓扑
+2. **环境准备**: 系统要求、操作系统、依赖软件
+3. **数据库部署**: MySQL 安装、配置、优化
+4. **Redis部署**: Redis 安装、配置、持久化
+5. **服务器部署**: CMake构建、编译、部署、systemd服务
+6. **客户端部署**: Windows、Linux、macOS客户端部署
+7. **生产环境**: 负载均衡、SSL/TLS、防火墙
+8. **监控维护**: 日志查看、性能监控、备份策略、故障排查
 
-## 安全建议
-
-### 网络安全
-
-1. 使用防火墙限制访问：
-   ```bash
-   sudo ufw allow from 192.168.1.0/24 to any port 8000
-   sudo ufw allow from 192.168.1.0/24 to any port 9001
-   ```
-
-2. 使用SSL/TLS加密通信
-
-3. 定期更新系统和依赖
-
-### 数据安全
-
-1. 使用强密码
-2. 定期备份数据
-3. 限制数据库用户权限
-4. 使用Redis密码认证
-
-### 应用安全
-
-1. 定期更新应用
-2. 监控异常访问
-3. 实施访问控制
-
-## 获取帮助
-
-如果遇到部署问题，请：
-
-1. 查看本文档的[故障排查](#故障排查)部分
-2. 查看项目Issues: https://github.com/yourusername/ChatAndFileTransferSystem/issues
-3. 提交新的Issue，包含以下信息：
-   - 操作系统版本
-   - 硬件配置
-   - 错误日志
-   - 配置文件内容（敏感信息已脱敏）
-
-## 下一步
-
-部署成功后，请查看[使用指南](README.md)了解如何使用系统。
+所有部署流程遵循 CMake + Qt6 构建系统，确保跨平台兼容性和可维护性。

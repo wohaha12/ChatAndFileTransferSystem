@@ -104,6 +104,13 @@ private:
      */
     bool ensureDirectoryExists(const std::string& dirPath) const;
     
+    /**
+     * @brief 安全处理文件路径，防止路径遍历攻击
+     * @param filePath 原始文件路径
+     * @return 安全的文件路径
+     */
+    static std::string sanitizeFilePath(const std::string& filePath);
+    
 private:
     std::string m_basePath;                    // 基础存储路径
     std::mutex m_mutex;                       // 互斥锁

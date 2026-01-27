@@ -1,6 +1,8 @@
 #include "RedisManager.h"
 #include <hiredis/hiredis.h>
 #include <iostream>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 
 namespace ChatSystem {
 namespace MetaServer {
@@ -283,6 +285,36 @@ redisContext* RedisManager::initConnection()
     }
     
     return redis;
+}
+
+QFuture<bool> RedisManager::setAsync(const std::string& key, const std::string& value, int expire)
+{
+    return QtConcurrent::run([this, key, value, expire]() -> bool {
+        return set(key, value, expire);
+    });
+}
+
+QFuture<std::pair<bool, std::string>> RedisManager::getAsync(const std::string& key)
+{
+    return QtConcurrent::run([this, key]() -> std::pair<bool, std::string> {
+        std::string value;
+        bool success = get(key, value);
+        return std::make_pair(success, value);
+    });
+}
+
+QFuture<bool> RedisManager::delAsync(const std::string& key)
+{
+    return QtConcurrent::run([this, key]() -> bool {
+        return del(key);
+    });
+}
+
+QFuture<bool> RedisManager::existsAsync(const std::string& key)
+{
+    return QtConcurrent::run([this, key]() -> bool {
+        return exists(key);
+    });
 }
 
 } // namespace Cache

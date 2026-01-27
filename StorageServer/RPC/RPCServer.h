@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-#include "Common/Protocol/InternalProtocol.h"
-#include "Common/Protocol/TransHeader.h"
+#include "Protocol/InternalProtocol.h"
+#include "Protocol/TransHeader.h"
 
 namespace storage_server {
 namespace rpc {

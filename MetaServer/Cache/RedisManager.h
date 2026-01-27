@@ -4,6 +4,8 @@
 #include <memory>
 #include <mutex>
 #include <QObject>
+#include <QFuture>
+#include <QFutureWatcher>
 
 // 前向声明Redis相关类型
 struct redisContext;
@@ -44,7 +46,7 @@ public:
     void releaseConnection(redisContext* conn);
     
     /**
-     * @brief 设置键值对
+     * @brief 设置键值对（同步）
      * @param key 键
      * @param value 值
      * @param expire 过期时间（秒），默认0表示不过期
@@ -53,7 +55,7 @@ public:
     bool set(const std::string& key, const std::string& value, int expire = 0);
     
     /**
-     * @brief 获取键对应的值
+     * @brief 获取键对应的值（同步）
      * @param key 键
      * @param value 输出值
      * @return 成功返回true，失败返回false
@@ -61,14 +63,14 @@ public:
     bool get(const std::string& key, std::string& value);
     
     /**
-     * @brief 删除键
+     * @brief 删除键（同步）
      * @param key 键
      * @return 成功返回true，失败返回false
      */
     bool del(const std::string& key);
     
     /**
-     * @brief 设置键的过期时间
+     * @brief 设置键的过期时间（同步）
      * @param key 键
      * @param expire 过期时间（秒）
      * @return 成功返回true，失败返回false
@@ -76,11 +78,41 @@ public:
     bool expire(const std::string& key, int expire);
     
     /**
-     * @brief 检查键是否存在
+     * @brief 检查键是否存在（同步）
      * @param key 键
      * @return 存在返回true，不存在返回false
      */
     bool exists(const std::string& key);
+    
+    /**
+     * @brief 异步设置键值对
+     * @param key 键
+     * @param value 值
+     * @param expire 过期时间（秒），默认0表示不过期
+     * @return QFuture对象，可用于获取结果
+     */
+    QFuture<bool> setAsync(const std::string& key, const std::string& value, int expire = 0);
+    
+    /**
+     * @brief 异步获取键对应的值
+     * @param key 键
+     * @return QFuture对象，可用于获取结果
+     */
+    QFuture<std::pair<bool, std::string>> getAsync(const std::string& key);
+    
+    /**
+     * @brief 异步删除键
+     * @param key 键
+     * @return QFuture对象，可用于获取结果
+     */
+    QFuture<bool> delAsync(const std::string& key);
+    
+    /**
+     * @brief 异步检查键是否存在
+     * @param key 键
+     * @return QFuture对象，可用于获取结果
+     */
+    QFuture<bool> existsAsync(const std::string& key);
     
     /**
      * @brief 关闭Redis连接

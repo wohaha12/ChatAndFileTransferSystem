@@ -6,6 +6,9 @@
 #include <map>
 
 #include <QObject>
+#include "TransHeader.h"
+#include "ProtocolBodies.h"
+#include "InternalProtocol.h"
 
 namespace ChatSystem {
 namespace MetaServer {

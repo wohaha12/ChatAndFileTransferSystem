@@ -36,3 +36,59 @@
 
 - 创建时间: 2026-01-20
 - 最后更新: 2026-01-27
+
+## 重构亮点
+
+本次重构实现了以下重要改进：
+
+### 1. 构建系统升级
+- 从 QMake 迁移到 CMake 3.16+
+- 支持 Qt6.2+ 版本
+- 统一 C++17 标准
+- 改进静态库链接方式
+
+### 2. 网络层跨平台统一
+- 移除 Linux 独有的 Epoll 代码
+- 使用 Qt6 原生网络模块（QTcpServer/QTcpSocket）
+- Windows 上自动使用 IOCP
+- Linux 上自动使用 Epoll
+- macOS 上自动使用 kqueue
+
+### 3. 安全机制增强
+- 添加路径遍历防护（sanitizeFilePath）
+- 添加缓冲区溢出防护（safeCopy）
+- 协议头添加版本号字段
+- 上传响应添加秒传标志
+- 下载请求添加用户ID验证
+
+### 4. 并发与性能优化
+- Redis 操作异步化（QtConcurrent::run）
+- 使用 QFutureWatcher 监听异步结果
+- 避免阻塞主事件循环
+- 提升系统并发性能
+
+### 5. 运维基础设施
+- 实现统一的日志系统（Logger）
+- 支持多级别日志（Debug、Info、Warning、Error、Fatal）
+- 输出到控制台和文件
+- 包含时间戳、线程ID、文件行号
+
+### 6. 文档一致性
+- 更新所有技术文档，反映 Qt6 + CMake 构建系统
+- 更新架构图，展示 Qt6 原生网络
+- 更新协议定义，包含安全字段
+- 更新部署文档，支持 CMake 构建
+- 确保文档与代码实现保持一致
+
+## 技术栈
+
+- **构建工具**: CMake 3.16+
+- **C++标准**: C++17
+- **Qt版本**: Qt 6.2+
+- **数据库**: MySQL 8.0+
+- **缓存**: Redis 6.0+
+- **跨平台**: Windows、Linux、macOS
+
+## 文档维护
+
+所有文档遵循 [DOCUMENTATION_GUIDELINES.md](DOCUMENTATION_GUIDELINES.md) 中定义的规范进行维护和更新。

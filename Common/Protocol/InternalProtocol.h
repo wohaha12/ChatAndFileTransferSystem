@@ -77,5 +77,17 @@ struct UploadCompleteNotify {
 };
 #pragma pack(pop)
 
+/**
+ * @brief 下载完成通知
+ */
+#pragma pack(push, 1)
+struct DownloadCompleteNotification {
+    uint64_t user_id;             // 用户ID
+    uint64_t file_id;             // 文件ID
+    uint64_t timestamp;           // 完成时间戳
+    uint32_t reserved;            // 保留字段
+};
+#pragma pack(pop)
+
 } // namespace Protocol
 } // namespace ChatSystem

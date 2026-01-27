@@ -1,6 +1,7 @@
 #include "ServerConfig.h"
 #include <fstream>
 #include <sstream>
+#include <cstdint>
 
 namespace ChatSystem {
 namespace MetaServer {

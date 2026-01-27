@@ -3,6 +3,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <ctime>
 
 namespace ChatSystem {
 namespace StorageServer {
@@ -106,11 +107,14 @@ bool RPCClient::sendHeartbeat(uint32_t serverId, float cpuUsage, float memoryUsa
         return false;
     }
     
-    Protocol::HeartbeatRequest request;
-    request.serverId = serverId;
-    request.cpuUsage = cpuUsage;
-    request.memoryUsage = memoryUsage;
-    request.diskUsage = diskUsage;
+    Protocol::StatusReport request;
+    request.timestamp = static_cast<uint64_t>(std::time(nullptr));
+    request.server_id = serverId;
+    request.cpu_usage = cpuUsage;
+    request.memory_usage = memoryUsage;
+    request.disk_usage = diskUsage;
+    request.network_in = 0;
+    request.network_out = 0;
     request.connections = connections;
     
     QByteArray requestBytes(reinterpret_cast<const char*>(&request), sizeof(request));
@@ -131,7 +135,6 @@ bool RPCClient::sendUploadComplete(uint64_t userId, uint64_t fileId, const std::
     strncpy(notification.upload_token, uploadToken.c_str(), sizeof(notification.upload_token) - 1);
     notification.upload_token[sizeof(notification.upload_token) - 1] = '\0';
     notification.user_id = userId;
-    notification.fileId = fileId;
     strncpy(notification.file_hash, fileHash.c_str(), sizeof(notification.file_hash) - 1);
     notification.file_hash[sizeof(notification.file_hash) - 1] = '\0';
     notification.file_size = fileSize;
@@ -200,8 +203,10 @@ bool RPCClient::sendDownloadComplete(uint64_t userId, uint64_t fileId)
     }
     
     Protocol::DownloadCompleteNotification notification;
-    notification.userId = userId;
-    notification.fileId = fileId;
+    notification.user_id = userId;
+    notification.file_id = fileId;
+    notification.timestamp = static_cast<uint64_t>(std::time(nullptr));
+    notification.reserved = 0;
     
     QByteArray notificationBytes(reinterpret_cast<const char*>(&notification), sizeof(notification));
     

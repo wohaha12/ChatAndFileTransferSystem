@@ -4,6 +4,9 @@
 #include <cstdint>
 #include "CommonProtocol.h"
 
+namespace ChatSystem {
+namespace Protocol {
+
 #pragma pack(push, 1)
 
 /**
@@ -32,7 +35,7 @@ struct LoginRes {
 /**
  * @brief 上传申请请求包体
  */
-struct UploadReq {
+struct UploadRequest {
     uint64_t user_id;         // 用户ID
     char file_name[256];      // 文件名（含扩展名）
     uint64_t file_size;       // 文件大小（字节）
@@ -47,6 +50,7 @@ struct UploadReq {
 struct UploadRes {
     uint32_t result_code;      // 结果码
     uint64_t file_id;         // 文件ID（秒传时返回）
+    uint8_t is_instant_upload; // 是否秒传（0-否，1-是）
     char upload_token[64];     // 上传令牌
     char storage_ip[45];       // 存储服务器IP（支持IPv6）
     uint16_t storage_port;    // 存储服务器端口
@@ -80,8 +84,8 @@ struct UploadChunkRes {
 /**
  * @brief 下载申请请求包体
  */
-struct DownloadReq {
-    uint64_t user_id;         // 用户ID
+struct DownloadRequest {
+    uint64_t user_id;         // 用户ID（用于权限验证）
     uint64_t file_id;         // 文件ID
     uint32_t chunk_size;      // 请求的分片大小
 };
@@ -89,7 +93,7 @@ struct DownloadReq {
 /**
  * @brief 下载申请响应包体
  */
-struct DownloadRes {
+struct DownloadResponse {
     uint32_t result_code;      // 结果码
     uint64_t file_id;         // 文件ID
     uint64_t file_size;       // 文件大小
@@ -341,5 +345,8 @@ struct UserInfo {
 };
 
 #pragma pack(pop)
+
+} // namespace Protocol
+} // namespace ChatSystem
 
 #endif // COMMON_PROTOCOL_BODIES_H

@@ -14,8 +14,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../Common
 )
 
-add_subdirectory(../Common/Protocol CommonProtocol)
-add_subdirectory(../Common/Utils CommonUtils)
 add_subdirectory(Core)
 add_subdirectory(Network)
 add_subdirectory(IO)
@@ -33,8 +31,7 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    CommonProtocol
-    CommonUtils
+    Common
     StorageServerCore
     StorageServerNetwork
     StorageServerIO

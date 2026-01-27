@@ -1,10 +1,13 @@
 #pragma once
 
-#include <string>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QThreadPool>
+#include <QMap>
+#include <QMutex>
+#include <QAtomicInt>
 #include <atomic>
-#include <map>
-#include <mutex>
-#include <QObject>
+#include "../../Common/Protocol/TransHeader.h"
 
 namespace ChatSystem {
 namespace StorageServer {
@@ -13,9 +16,11 @@ namespace Network {
 class Connection;
 
 /**
- * @brief TCP服务器类（Epoll封装）
+ * @brief TCP服务器类（Qt6原生网络实现）
+ * @details 使用QTcpServer实现跨平台网络通信
+ *          Qt6在Windows上自动使用IOCP，在Linux上自动使用Epoll
  */
-class TcpServer : public QObject {
+class TcpServer : public QTcpServer {
     Q_OBJECT
 public:
     explicit TcpServer(QObject* parent = nullptr);
@@ -23,11 +28,10 @@ public:
     
     /**
      * @brief 启动服务器
-     * @param ip 监听IP地址
      * @param port 监听端口
      * @return 成功返回true，失败返回false
      */
-    bool start(const std::string& ip, uint16_t port);
+    bool start(quint16 port);
     
     /**
      * @brief 停止服务器
@@ -67,17 +71,19 @@ signals:
      */
     void messageReceived(qintptr socketDescriptor, const Protocol::TransHeader& header, const QByteArray& data);
     
-private slots:
+protected:
     /**
-     * @brief Epoll事件循环
+     * @brief 重写QTcpServer的incomingConnection方法
+     * @param socketDescriptor 套接字描述符
      */
-    void eventLoop();
+    void incomingConnection(qintptr socketDescriptor) override;
     
 private:
     /**
      * @brief 处理新连接
+     * @param socketDescriptor 套接字描述符
      */
-    void handleNewConnection();
+    void handleNewConnection(qintptr socketDescriptor);
     
     /**
      * @brief 处理连接关闭
@@ -85,20 +91,11 @@ private:
      */
     void handleConnectionClose(qintptr socketDescriptor);
     
-    /**
-     * @brief 处理可读事件
-     * @param socketDescriptor 套接字描述符
-     */
-    void handleReadableEvent(qintptr socketDescriptor);
-    
 private:
-    int m_epollFd;                        // Epoll文件描述符
-    int m_listenFd;                       // 监听套接字
-    std::map<qintptr, Connection*> m_connections; // 连接映射
-    QThread* m_eventThread;               // 事件循环线程
-    std::atomic<bool> m_running;                // 运行状态
-    std::mutex m_mutex;                       // 互斥锁
-    std::atomic<int> m_connectionCount;       // 当前连接数
+    QMap<qintptr, Connection*> m_connections; // 连接映射
+    QMutex m_mutex;                              // 互斥锁
+    QAtomicInt m_connectionCount;                   // 当前连接数
+    QAtomicInt m_running;                          // 运行状态
 };
 
 } // namespace Network

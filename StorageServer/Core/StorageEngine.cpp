@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>
+#include <algorithm>
 
 namespace ChatSystem {
 namespace StorageServer {
@@ -19,6 +20,30 @@ StorageEngine::StorageEngine(QObject* parent)
 
 StorageEngine::~StorageEngine()
 {
+}
+
+/**
+ * @brief 安全处理文件路径，防止路径遍历攻击
+ * @param filePath 原始文件路径
+ * @return 安全的文件路径
+ */
+std::string StorageEngine::sanitizeFilePath(const std::string& filePath) const
+{
+    std::string safePath = filePath;
+    
+    size_t pos = 0;
+    while ((pos = safePath.find("..", pos)) != std::string::npos) {
+        safePath.replace(pos, 2, "");
+        pos += 2;
+    }
+    
+    std::replace(safePath.begin(), safePath.end(), '\\', '/');
+    
+    while (!safePath.empty() && (safePath[0] == '/' || safePath[0] == '.')) {
+        safePath = safePath.substr(1);
+    }
+    
+    return safePath;
 }
 
 bool StorageEngine::initialize(const std::string& basePath)
@@ -39,7 +64,8 @@ bool StorageEngine::writeChunk(const std::string& filePath, uint32_t chunkIndex,
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     
-    std::string fullPath = m_basePath + "/" + filePath;
+    std::string safePath = sanitizeFilePath(filePath);
+    std::string fullPath = m_basePath + "/" + safePath;
     
     std::string dirPath = fullPath.substr(0, fullPath.find_last_of('/'));
     if (!ensureDirectoryExists(dirPath)) {
@@ -66,7 +92,8 @@ QByteArray StorageEngine::readChunk(const std::string& filePath, uint32_t chunkI
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     
-    std::string fullPath = m_basePath + "/" + filePath;
+    std::string safePath = sanitizeFilePath(filePath);
+    std::string fullPath = m_basePath + "/" + safePath;
     
     std::ifstream file(fullPath, std::ios::binary);
     if (!file.is_open()) {
@@ -89,7 +116,8 @@ bool StorageEngine::createFile(const std::string& filePath, uint64_t fileSize)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     
-    std::string fullPath = m_basePath + "/" + filePath;
+    std::string safePath = sanitizeFilePath(filePath);
+    std::string fullPath = m_basePath + "/" + safePath;
     
     std::string dirPath = fullPath.substr(0, fullPath.find_last_of('/'));
     if (!ensureDirectoryExists(dirPath)) {
@@ -115,7 +143,8 @@ bool StorageEngine::deleteFile(const std::string& filePath)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     
-    std::string fullPath = m_basePath + "/" + filePath;
+    std::string safePath = sanitizeFilePath(filePath);
+    std::string fullPath = m_basePath + "/" + safePath;
     
     if (unlink(fullPath.c_str()) != 0) {
         std::cerr << "删除文件失败: " << fullPath << std::endl;
@@ -149,7 +178,8 @@ uint64_t StorageEngine::getFileSize(const std::string& filePath) const
 
 std::string StorageEngine::calculateFileHash(const std::string& filePath) const
 {
-    std::string fullPath = m_basePath + "/" + filePath;
+    std::string safePath = sanitizeFilePath(filePath);
+    std::string fullPath = m_basePath + "/" + safePath;
     
     std::ifstream file(fullPath, std::ios::binary);
     if (!file.is_open()) {

@@ -3,11 +3,11 @@
 
 #include <QObject>
 #include <QString>
-#include <QTcpSocket>
 #include <QByteArray>
 #include <QAtomicInt>
 #include <QMutex>
-#include "../../../Common/Protocol/CommonProtocol.h"
+#include <QTcpSocket>
+#include "CommonProtocol.h"
 
 class NetworkManager : public QObject
 {

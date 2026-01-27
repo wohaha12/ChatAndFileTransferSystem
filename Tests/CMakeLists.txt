@@ -45,11 +45,16 @@ target_link_libraries(tests
 
 enable_testing()
 
-QTEST_ADD_TESTCASE(MemoryPoolTest tests_memory_pool.cpp tests_memory_pool.h)
-QTEST_ADD_TESTCASE(LoadBalancerTest tests_load_balancer.cpp tests_load_balancer.h)
-QTEST_ADD_TESTCASE(ProtocolTest tests_protocol.cpp tests_protocol.h)
-QTEST_ADD_TESTCASE(DatabaseTest tests_database.cpp tests_database.h)
-QTEST_ADD_TESTCASE(TokenValidatorTest tests_token_validator.cpp tests_token_validator.h)
-QTEST_ADD_TESTCASE(StorageEngineTest tests_storage_engine.cpp tests_storage_engine.h)
+# 添加测试
+add_test(NAME AllTests COMMAND tests)
+
+# 如果需要单独运行每个测试类，可以使用以下方式
+# 注意：这需要测试类支持命令行参数来指定运行哪个测试
+# add_test(NAME MemoryPoolTest COMMAND tests -class MemoryPoolTest)
+# add_test(NAME LoadBalancerTest COMMAND tests -class LoadBalancerTest)
+# add_test(NAME ProtocolTest COMMAND tests -class ProtocolTest)
+# add_test(NAME DatabaseTest COMMAND tests -class DatabaseTest)
+# add_test(NAME TokenValidatorTest COMMAND tests -class TokenValidatorTest)
+# add_test(NAME StorageEngineTest COMMAND tests -class StorageEngineTest)
 
 message(STATUS "Tests module configured")

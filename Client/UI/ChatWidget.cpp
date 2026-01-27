@@ -33,6 +33,11 @@ void ChatWidget::setupUi()
     connect(ui->emojiButton, &QPushButton::clicked, this, &ChatWidget::onEmojiButtonClicked);
 }
 
+void ChatWidget::connectSignals()
+{
+    // 信号连接已在 setupUi() 中完成
+}
+
 void ChatWidget::applyStyles()
 {
     StyleManager* styleManager = StyleManager::instance();

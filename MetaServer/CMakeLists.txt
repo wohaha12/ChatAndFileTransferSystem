@@ -14,8 +14,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(../Common/Protocol CommonProtocol)
-add_subdirectory(../Common/Utils CommonUtils)
 add_subdirectory(Core)
 add_subdirectory(Database)
 add_subdirectory(Network)
@@ -32,8 +30,7 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    CommonProtocol
-    CommonUtils
+    Common
     MetaServerCore
     MetaServerDatabase
     MetaServerNetwork

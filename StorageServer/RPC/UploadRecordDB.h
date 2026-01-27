@@ -5,8 +5,8 @@
 #include <cstdint>
 #include <mutex>
 #include <QObject>
-
-struct sqlite3;
+#include <sqlite3.h>
+#include "CommonProtocol.h"
 
 namespace ChatSystem {
 namespace StorageServer {

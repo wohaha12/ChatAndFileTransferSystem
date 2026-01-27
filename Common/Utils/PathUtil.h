@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <cstdint>
 
 /**
  * @brief 路径工具类

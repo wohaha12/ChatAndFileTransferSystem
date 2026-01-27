@@ -103,6 +103,14 @@ public:
      * @return 是返回true，否则返回false
      */
     static bool isEmptyOrWhitespace(const std::string& str);
+    
+    /**
+     * @brief 安全拷贝字符串，防止缓冲区溢出
+     * @param dest 目标缓冲区
+     * @param src 源字符串
+     * @param destSize 目标缓冲区大小
+     */
+    static void safeCopy(char* dest, const std::string& src, size_t destSize);
 };
 
 } // namespace Utils

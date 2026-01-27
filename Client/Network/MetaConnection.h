@@ -5,7 +5,7 @@
 #include <QString>
 #include <QTcpSocket>
 #include <QByteArray>
-#include "../../../Common/Protocol/CommonProtocol.h"
+#include "CommonProtocol.h"
 
 class MetaConnection : public QObject
 {

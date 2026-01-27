@@ -1,5 +1,5 @@
 #include "RPCServer.h"
-#include "StorageServer/Core/StorageServer.h"
+#include "../../Core/StorageServer.h"
 
 namespace storage_server {
 namespace rpc {
