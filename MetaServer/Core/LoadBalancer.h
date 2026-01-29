@@ -92,6 +92,7 @@ private:
         float diskUsage;        // 磁盘使用率
         uint32_t connections;   // 当前连接数
         uint64_t lastHeartbeat; // 最后心跳时间
+    int currentWeight;     // 当前权重（用于加权轮询）
     };
     
     /**

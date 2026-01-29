@@ -9,6 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Network Sql)
+find_package(OpenSSL)
 
 set(HEADERS
     MetaServer.h
@@ -34,6 +35,15 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Network
     Qt6::Sql
 )
+
+# Link OpenSSL if found
+if(OpenSSL_FOUND)
+    target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_INCLUDE_DIR})
+    message(STATUS "OpenSSL found: ${OPENSSL_INCLUDE_DIR}")
+else()
+    message(WARNING "OpenSSL not found, using Qt's built-in cryptographic functions")
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC

@@ -4,6 +4,8 @@
 #include <atomic>
 #include <QObject>
 #include <QTcpSocket>
+#include <QAbstractSocket>
+#include "CommonProtocol.h"
 
 namespace ChatSystem {
 namespace MetaServer {

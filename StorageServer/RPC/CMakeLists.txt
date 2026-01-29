@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Network)
+find_package(Qt6 REQUIRED COMPONENTS Core Network Sql)
 
 set(RPC_SOURCES
     RPCClient.cpp
@@ -24,11 +24,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../
     ${CMAKE_SOURCE_DIR}/Common
+    ${CMAKE_SOURCE_DIR}/Common/Protocol
 )
 
 target_link_libraries(${PROJECT_NAME}
     Qt6::Core
     Qt6::Network
+    Qt6::Sql
     CommonProtocol
     CommonUtils
     Threads::Threads

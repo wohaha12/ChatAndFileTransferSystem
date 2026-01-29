@@ -9,6 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Sql)
+find_package(MySQL)
 
 set(HEADERS
     DatabaseManager.h
@@ -33,6 +34,15 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Core
     Qt6::Sql
 )
+
+# Link MySQL if found
+if(MySQL_FOUND)
+    target_link_libraries(${PROJECT_NAME} PRIVATE MySQL::mysql_client)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${MYSQL_INCLUDE_DIR})
+    message(STATUS "MySQL found: ${MYSQL_INCLUDE_DIR}")
+else()
+    message(WARNING "MySQL not found, database functionality may be limited")
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC

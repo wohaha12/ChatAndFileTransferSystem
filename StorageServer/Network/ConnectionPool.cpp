@@ -1,4 +1,5 @@
 #include "ConnectionPool.h"
+#include "Connection.h"
 
 namespace ChatSystem {
 namespace StorageServer {

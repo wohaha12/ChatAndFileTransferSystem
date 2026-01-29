@@ -45,3 +45,7 @@ ehthumbs.db
 
 # Trae IDE files
 .trae/
+.qtcreator/
+.vscode/
+.claude_config/
+.claude/

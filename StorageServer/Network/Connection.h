@@ -2,7 +2,11 @@
 
 #include <string>
 #include <atomic>
+#include <mutex>
+#include <QTcpSocket>
+#include <QAbstractSocket>
 #include <QObject>
+#include "CommonProtocol.h"
 
 namespace ChatSystem {
 namespace StorageServer {

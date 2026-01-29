@@ -5,8 +5,9 @@
 #include <cstdint>
 #include <mutex>
 #include <QObject>
-#include <sqlite3.h>
-#include "CommonProtocol.h"
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 
 namespace ChatSystem {
 namespace StorageServer {
@@ -104,18 +105,11 @@ private:
      */
     bool createTables();
     
-    /**
-     * @brief 从查询结果构建上传记录
-     * @param stmt SQLite语句
-     * @return 上传记录
-     */
-    LocalUploadRecord recordFromStatement(sqlite3_stmt* stmt);
-    
 private:
-    sqlite3* m_db;              // SQLite数据库连接
-    std::string m_dbPath;        // 数据库文件路径
-    bool m_initialized;          // 是否已初始化
-    mutable std::mutex m_mutex;   // 互斥锁
+    QSqlDatabase m_db;          // SQLite数据库连接
+    QString m_dbPath;           // 数据库文件路径
+    bool m_initialized;         // 是否已初始化
+    mutable std::mutex m_mutex;  // 互斥锁
 };
 
 } // namespace RPC

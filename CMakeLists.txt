@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
+# vcpkg toolchain configuration
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+    message(STATUS "Using vcpkg toolchain: $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+endif()
+
 project(ChatAndFileTransferSystem VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)

@@ -1,7 +1,8 @@
 #pragma once
+
 #include <memory>
-#include "Protocol/InternalProtocol.h"
-#include "Protocol/TransHeader.h"
+#include "CommonProtocol.h"
+#include "InternalProtocol.h"
 
 namespace storage_server {
 namespace rpc {
@@ -54,28 +55,28 @@ private:
      * @param heartbeat 心跳请求
      * @return 处理结果
      */
-    bool HandleHeartbeatRequest(const InternalProtocol::Heartbeat& heartbeat);
+    bool HandleHeartbeatRequest(const Protocol::Heartbeat& heartbeat);
     
     /**
      * @brief 处理状态查询请求
      * @param request 状态查询请求
      * @return 处理结果
      */
-    bool HandleStatusQuery(const InternalProtocol::StatusQuery& request);
+    bool HandleStatusQuery(const Protocol::StatusQuery& request);
     
     /**
      * @brief 处理文件块删除请求
      * @param request 文件块删除请求
      * @return 处理结果
      */
-    bool HandleDeleteChunkRequest(const InternalProtocol::DeleteChunkRequest& request);
+    bool HandleDeleteChunkRequest(const Protocol::DeleteChunkRequest& request);
     
     /**
      * @brief 处理文件迁移请求
      * @param request 文件迁移请求
      * @return 处理结果
      */
-    bool HandleFileMigrationRequest(const InternalProtocol::FileMigrationRequest& request);
+    bool HandleFileMigrationRequest(const Protocol::FileMigrationRequest& request);
     
 private:
     StorageServer* server_;  ///< StorageServer实例指针

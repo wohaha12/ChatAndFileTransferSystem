@@ -5,6 +5,10 @@
 #include <map>
 #include <mutex>
 #include <QObject>
+#include <QTimer>
+
+#include "CommonProtocol.h"
+#include "ProtocolBodies.h"
 
 namespace ChatSystem {
 namespace StorageServer {

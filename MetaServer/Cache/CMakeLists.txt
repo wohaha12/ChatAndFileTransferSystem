@@ -9,6 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(hiredis)
 
 set(HEADERS
     RedisManager.h
@@ -26,6 +27,14 @@ add_library(${PROJECT_NAME} STATIC
 target_link_libraries(${PROJECT_NAME}
     Qt6::Core
 )
+
+# Link hiredis if found
+if(hiredis_FOUND)
+    target_link_libraries(${PROJECT_NAME} PRIVATE hiredis::hiredis)
+    message(STATUS "hiredis found")
+else()
+    message(WARNING "hiredis not found, caching functionality may be limited")
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
