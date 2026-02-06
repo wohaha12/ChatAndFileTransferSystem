@@ -9,6 +9,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Common/Protocol
+)
+
 find_package(Qt6 REQUIRED COMPONENTS Core Network)
 
 set(SOURCES
@@ -29,6 +33,7 @@ add_library(${PROJECT_NAME} STATIC
 target_link_libraries(${PROJECT_NAME}
     Qt6::Core
     Qt6::Network
+    Protocol
 )
 
 target_include_directories(${PROJECT_NAME}

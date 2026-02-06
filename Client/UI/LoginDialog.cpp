@@ -1,141 +1,104 @@
 #include "LoginDialog.h"
 #include "ui_LoginDialog.h"
-#include "StyleManager.h"
 #include <QMessageBox>
 #include <QRegularExpression>
-#include <QPropertyAnimation>
-#include <QGraphicsOpacityEffect>
-#include <QTimer>
-#include <QPainter>
-#include <QLinearGradient>
 
-LoginDialog::LoginDialog(QWidget* parent)
-    : QDialog(parent)
-    , ui(new Ui::LoginDialog)
-{
-    ui->setupUi(this);
-    setupDialog();
-    applyStyles();
-    setupAnimations();
+LoginDialog::LoginDialog(QWidget *parent)
+    : QDialog(parent), ui(new Ui::LoginDialog) {
+  ui->setupUi(this);
+  closeButton = ui->closeButton;
 }
 
-LoginDialog::~LoginDialog()
-{
-    delete ui;
+LoginDialog::~LoginDialog() { delete ui; }
+
+void LoginDialog::setupDialog() {
+  setWindowModality(Qt::ApplicationModal);
+  setMinimumSize(420, 500);
+  setMaximumSize(420, 500);
+
+  connect(ui->loginButton, &QPushButton::clicked, this,
+          &LoginDialog::onLoginButtonClicked);
+  connect(ui->registerButton, &QPushButton::clicked, this,
+          &LoginDialog::onRegisterButtonClicked);
+  connect(ui->closeButton, &QPushButton::clicked, this,
+          &LoginDialog::onCloseButtonClicked);
+  // connect(ui->togglePasswordButton, &QPushButton::clicked, this,
+  // &LoginDialog::onTogglePasswordClicked); connect(ui->clearUsernameButton,
+  // &QPushButton::clicked, this, &LoginDialog::onClearUsernameClicked);
+  // connect(ui->clearPasswordButton, &QPushButton::clicked, this,
+  // &LoginDialog::onClearPasswordClicked);
+
+  setupPasswordToggle();
 }
 
-void LoginDialog::setupDialog()
-{
-    setAttribute(Qt::WA_TranslucentBackground);
-    setWindowModality(Qt::ApplicationModal);
-    setMinimumSize(420, 500);
-    setMaximumSize(420, 500);
-    
-    connect(ui->loginButton, &QPushButton::clicked, this, &LoginDialog::onLoginButtonClicked);
-    connect(ui->registerButton, &QPushButton::clicked, this, &LoginDialog::onRegisterButtonClicked);
+void LoginDialog::paintEvent(QPaintEvent *event) { QDialog::paintEvent(event); }
+
+// 移除setupClearButtons和相关函数，使用QLineEdit的actionButton功能
+
+// 移除onClearUsernameClicked和onClearPasswordClicked，使用QLineEdit的actionButton功能
+
+void LoginDialog::setupPasswordToggle() { togglePasswordVisibility(); }
+
+void LoginDialog::togglePasswordVisibility() {
+  /*
+  if (ui->passwordLineEdit->echoMode() == QLineEdit::Normal) {
+    ui->passwordLineEdit->setEchoMode(QLineEdit::Password);
+    ui->togglePasswordButton->setText("👁");
+  } else {
+    ui->passwordLineEdit->setEchoMode(QLineEdit::Normal);
+    ui->togglePasswordButton->setText("🙈");
+  }
+  */
 }
 
-void LoginDialog::applyStyles()
-{
-    StyleManager* styleManager = StyleManager::instance();
+void LoginDialog::onTogglePasswordClicked() { togglePasswordVisibility(); }
 
-    styleManager->applyLabelStyle(ui->titleLabel, true);
-    styleManager->applyLabelStyle(ui->usernameLabel, false);
-    styleManager->applyLabelStyle(ui->passwordLabel, false);
-    styleManager->applyLineEditStyle(ui->usernameLineEdit);
-    styleManager->applyLineEditStyle(ui->passwordLineEdit);
-    styleManager->applyButtonStyle(ui->loginButton, true);
-    styleManager->applyButtonStyle(ui->registerButton, false);
+void LoginDialog::onCloseButtonClicked() { QApplication::quit(); }
 
-    QString logoStyle = QString(
-        "QLabel {"
-        "   color: %1;"
-        "   background: transparent;"
-        "}"
-    ).arg(styleManager->primaryColor().name());
-    ui->logoLabel->setStyleSheet(logoStyle);
+void LoginDialog::onLoginButtonClicked() {
+  QString username = ui->usernameLineEdit->text().trimmed();
+  QString password = ui->passwordLineEdit->text();
+
+  if (!validateInput()) {
+    return;
+  }
+
+  emit loginSuccess(username, 0);
 }
 
-void LoginDialog::setupAnimations()
-{
-    QGraphicsOpacityEffect* opacityEffect = new QGraphicsOpacityEffect(this);
-    this->setGraphicsEffect(opacityEffect);
-
-    QPropertyAnimation* fadeInAnimation = new QPropertyAnimation(opacityEffect, "opacity", this);
-    fadeInAnimation->setDuration(300);
-    fadeInAnimation->setStartValue(0.0);
-    fadeInAnimation->setEndValue(1.0);
-    fadeInAnimation->start(QPropertyAnimation::DeleteWhenStopped);
+void LoginDialog::onRegisterButtonClicked() {
+  QMessageBox::information(this, "提示", "注册功能待实现");
 }
 
-void LoginDialog::paintEvent(QPaintEvent* event)
-{
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
+bool LoginDialog::validateInput() {
+  QString username = ui->usernameLineEdit->text().trimmed();
+  QString password = ui->passwordLineEdit->text();
 
-    StyleManager* styleManager = StyleManager::instance();
-    QColor primaryColor = styleManager->primaryColor();
-    QColor secondaryColor = styleManager->secondaryColor();
+  if (username.isEmpty()) {
+    QMessageBox::warning(this, "警告", "用户名不能为空");
+    ui->usernameLineEdit->setFocus();
+    return false;
+  }
 
-    QLinearGradient gradient(0, 0, width(), height());
-    gradient.setColorAt(0.0, primaryColor);
-    gradient.setColorAt(1.0, secondaryColor);
+  if (password.isEmpty()) {
+    QMessageBox::warning(this, "警告", "密码不能为空");
+    ui->passwordLineEdit->setFocus();
+    return false;
+  }
 
-    painter.fillRect(rect(), gradient);
+  QRegularExpression usernameRegex("^[a-zA-Z0-9_]{3,20}$");
+  if (!usernameRegex.match(username).hasMatch()) {
+    QMessageBox::warning(this, "警告",
+                         "用户名格式不正确（3-20位字母、数字或下划线）");
+    ui->usernameLineEdit->setFocus();
+    return false;
+  }
 
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(255, 255, 255, 240));
-    painter.drawRoundedRect(10, 10, width() - 20, height() - 20, 15, 15);
+  if (password.length() < 6) {
+    QMessageBox::warning(this, "警告", "密码长度不能少于6位");
+    ui->passwordLineEdit->setFocus();
+    return false;
+  }
 
-    QDialog::paintEvent(event);
-}
-
-void LoginDialog::onLoginButtonClicked()
-{
-    QString username = ui->usernameLineEdit->text().trimmed();
-    QString password = ui->passwordLineEdit->text();
-
-    if (!validateInput()) {
-        return;
-    }
-
-    emit loginSuccess(username, 0);
-}
-
-void LoginDialog::onRegisterButtonClicked()
-{
-    QMessageBox::information(this, "提示", "注册功能待实现");
-}
-
-bool LoginDialog::validateInput()
-{
-    QString username = ui->usernameLineEdit->text().trimmed();
-    QString password = ui->passwordLineEdit->text();
-
-    if (username.isEmpty()) {
-        QMessageBox::warning(this, "警告", "用户名不能为空");
-        ui->usernameLineEdit->setFocus();
-        return false;
-    }
-
-    if (password.isEmpty()) {
-        QMessageBox::warning(this, "警告", "密码不能为空");
-        ui->passwordLineEdit->setFocus();
-        return false;
-    }
-
-    QRegularExpression usernameRegex("^[a-zA-Z0-9_]{3,20}$");
-    if (!usernameRegex.match(username).hasMatch()) {
-        QMessageBox::warning(this, "警告", "用户名格式不正确（3-20位字母、数字或下划线）");
-        ui->usernameLineEdit->setFocus();
-        return false;
-    }
-
-    if (password.length() < 6) {
-        QMessageBox::warning(this, "警告", "密码长度不能少于6位");
-        ui->passwordLineEdit->setFocus();
-        return false;
-    }
-
-    return true;
+  return true;
 }

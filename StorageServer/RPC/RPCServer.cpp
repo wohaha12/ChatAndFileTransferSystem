@@ -1,83 +1,63 @@
 #include "RPCServer.h"
 #include "../Core/StorageServer.h"
+#include "CommandTypes.h"
 #include "CommonProtocol.h"
 #include "InternalProtocol.h"
 
 namespace storage_server {
 namespace rpc {
 
-RPCServer::RPCServer(StorageServer* server) : server_(server) {
+RPCServer::RPCServer(StorageServer *server) : server_(server) {}
+
+RPCServer::~RPCServer() {}
+
+bool RPCServer::Start(uint16_t port) { return true; }
+
+void RPCServer::Stop() {}
+
+bool RPCServer::HandleRpcRequest(
+    const ::ChatSystem::Protocol::TransHeader &header, const char *data,
+    size_t length) {
+  switch (header.cmd) {
+  case ::ChatSystem::Protocol::CMD_INTERNAL_HEARTBEAT: {
+    ::ChatSystem::Protocol::Heartbeat heartbeat;
+    return HandleHeartbeatRequest(heartbeat);
+  }
+  case ::ChatSystem::Protocol::CMD_INTERNAL_STATUS_REPORT: {
+    ::ChatSystem::Protocol::StatusReport request;
+    return HandleStatusQuery(request);
+  }
+  case ::ChatSystem::Protocol::CMD_INTERNAL_DELETE_FILE: {
+    ::ChatSystem::Protocol::DeletePhysicalFile request;
+    return HandleDeleteChunkRequest(request);
+  }
+  case ::ChatSystem::Protocol::CMD_INTERNAL_UPLOAD_COMPLETE: {
+    ::ChatSystem::Protocol::UploadComplete request;
+    return HandleFileMigrationRequest(request);
+  }
+  default:
+    return false;
+  }
 }
 
-RPCServer::~RPCServer() {
+bool RPCServer::HandleHeartbeatRequest(
+    const ::ChatSystem::Protocol::Heartbeat &heartbeat) {
+  return true;
 }
 
-bool RPCServer::Start(uint16_t port) {
-    // 实现RPC服务器启动逻辑
-    return true;
+bool RPCServer::HandleStatusQuery(
+    const ::ChatSystem::Protocol::StatusReport &request) {
+  return true;
 }
 
-void RPCServer::Stop() {
-    // 实现RPC服务器停止逻辑
+bool RPCServer::HandleDeleteChunkRequest(
+    const ::ChatSystem::Protocol::DeletePhysicalFile &request) {
+  return true;
 }
 
-bool RPCServer::HandleRpcRequest(const Protocol::TransHeader& header, 
-                                 const char* data, 
-                                 size_t length) {
-    // 根据命令类型分发处理
-    switch (header.command) {
-        case Protocol::CommandType::kHeartbeat:
-        case Protocol::CommandType::kInternalHeartbeat: {
-            Protocol::Heartbeat heartbeat;
-            // 解析数据
-            // 处理心跳请求
-            return HandleHeartbeatRequest(heartbeat);
-        }
-        case Protocol::CommandType::kStatusQuery:
-        case Protocol::CommandType::kInternalStatusReport: {
-            Protocol::StatusQuery request;
-            // 解析数据
-            // 处理状态查询
-            return HandleStatusQuery(request);
-        }
-        case Protocol::CommandType::kDeleteChunkRequest:
-        case Protocol::CommandType::kInternalDeleteFile: {
-            Protocol::DeleteChunkRequest request;
-            // 解析数据
-            // 处理文件块删除请求
-            return HandleDeleteChunkRequest(request);
-        }
-        case Protocol::CommandType::kFileMigrationRequest: {
-            Protocol::FileMigrationRequest request;
-            // 解析数据
-            // 处理文件迁移请求
-            return HandleFileMigrationRequest(request);
-        }
-        default:
-            // 未知命令
-            return false;
-    }
-    return true;
-}
-
-bool RPCServer::HandleHeartbeatRequest(const Protocol::Heartbeat& heartbeat) {
-    // 实现心跳请求处理逻辑
-    return true;
-}
-
-bool RPCServer::HandleStatusQuery(const Protocol::StatusQuery& request) {
-    // 实现状态查询处理逻辑
-    return true;
-}
-
-bool RPCServer::HandleDeleteChunkRequest(const Protocol::DeleteChunkRequest& request) {
-    // 实现文件块删除请求处理逻辑
-    return true;
-}
-
-bool RPCServer::HandleFileMigrationRequest(const Protocol::FileMigrationRequest& request) {
-    // 实现文件迁移请求处理逻辑
-    return true;
+bool RPCServer::HandleFileMigrationRequest(
+    const ::ChatSystem::Protocol::UploadComplete &request) {
+  return true;
 }
 
 } // namespace rpc

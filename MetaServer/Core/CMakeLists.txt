@@ -30,10 +30,11 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADERS}
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} PUBLIC
     Qt6::Core
     Qt6::Network
     Qt6::Sql
+    Protocol
 )
 
 # Link OpenSSL if found

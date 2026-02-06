@@ -29,8 +29,8 @@ target_link_libraries(${PROJECT_NAME}
     StorageServerIO
     StorageServerRPC
     StorageServerConfig
-    CommonProtocol
-    CommonUtils
+    Protocol
+    Utils
     Threads::Threads
 )
 

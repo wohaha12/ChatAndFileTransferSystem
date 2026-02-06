@@ -26,6 +26,8 @@ signals:
 private slots:
     void onLoginButtonClicked();
     void onRegisterButtonClicked();
+    void onCloseButtonClicked();
+    void onTogglePasswordClicked();
 
 private:
     void setupDialog();
@@ -33,8 +35,12 @@ private:
     void setupAnimations();
     bool validateInput();
     void paintEvent(QPaintEvent* event) override;
+    void setupPasswordToggle();
+    void togglePasswordVisibility();
 
     Ui::LoginDialog* ui;
+    QPushButton* closeButton;
+    QPushButton* togglePasswordButton;
 };
 
 #endif // CLIENT_UI_LOGIN_DIALOG_H

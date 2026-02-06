@@ -11,11 +11,13 @@ find_package(Qt6 REQUIRED COMPONENTS Core Network Sql)
 set(RPC_SOURCES
     RPCClient.cpp
     RPCServer.cpp
+    UploadRecordDB.cpp
 )
 
 set(RPC_HEADERS
     RPCClient.h
     RPCServer.h
+    UploadRecordDB.h
 )
 
 add_library(${PROJECT_NAME} STATIC ${RPC_SOURCES} ${RPC_HEADERS})
@@ -31,8 +33,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Core
     Qt6::Network
     Qt6::Sql
-    CommonProtocol
-    CommonUtils
+    Protocol
+    Utils
     Threads::Threads
 )
 

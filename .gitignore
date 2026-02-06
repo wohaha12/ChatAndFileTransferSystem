@@ -49,3 +49,5 @@ ehthumbs.db
 .vscode/
 .claude_config/
 .claude/
+.agent/
+.cache/

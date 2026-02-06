@@ -6,42 +6,88 @@ namespace ChatSystem {
 namespace Protocol {
 
 /**
- * @brief 命令字枚举
+ * @brief Command type enumeration
  */
 enum CommandType : uint32_t {
-    // 控制平面命令 (Client <-> Meta Server)
-    CMD_LOGIN_REQ = 0x1001,          // 登录请求
-    CMD_LOGIN_RES = 0x1002,           // 登录响应
-    CMD_LOGOUT_REQ = 0x1003,          // 登出请求
-    CMD_LOGOUT_RES = 0x1004,          // 登出响应
-    
-    CMD_CHAT_REQ = 0x1011,            // 聊天请求
-    CMD_CHAT_RES = 0x1012,            // 聊天响应
-    CMD_CHAT_NOTIFY = 0x1013,         // 聊天通知
-    
-    CMD_UPLOAD_REQ = 0x1021,          // 申请上传
-    CMD_UPLOAD_RES = 0x1022,           // 上传申请响应
-    CMD_DOWNLOAD_REQ = 0x1023,        // 申请下载
-    CMD_DOWNLOAD_RES = 0x1024,        // 下载申请响应
-    
-    CMD_FILE_LIST_REQ = 0x1031,       // 文件列表请求
-    CMD_FILE_LIST_RES = 0x1032,       // 文件列表响应
-    CMD_DELETE_FILE_REQ = 0x1033,     // 删除文件请求
-    CMD_DELETE_FILE_RES = 0x1034,     // 删除文件响应
-    CMD_RENAME_FILE_REQ = 0x1035,     // 重命名文件请求
-    CMD_RENAME_FILE_RES = 0x1036,     // 重命名文件响应
-    
-    // 数据平面命令 (Client <-> Storage Server)
-    CMD_UPLOAD_CHUNK_REQ = 0x2001,    // 上传分片请求
-    CMD_UPLOAD_CHUNK_RES = 0x2002,     // 上传分片响应
-    CMD_DOWNLOAD_CHUNK_REQ = 0x2003,  // 下载分片请求
-    CMD_DOWNLOAD_CHUNK_RES = 0x2004,  // 下载分片响应
-    
-    // 内部RPC命令 (Meta Server <-> Storage Server)
-    CMD_INTERNAL_HEARTBEAT = 0x3001,  // 心跳检测
-    CMD_INTERNAL_STATUS_REPORT = 0x3002, // 状态上报
-    CMD_INTERNAL_UPLOAD_COMPLETE = 0x3003, // 上传完成通知
-    CMD_INTERNAL_DELETE_FILE = 0x3004,  // 删除物理文件
+  // ==================== Control Plane Commands (0x1000-0x1FFF)
+  // ====================
+
+  // User authentication (0x1001-0x10FF)
+  CMD_META_LOGIN_REQ = 0x1001,
+  CMD_META_LOGIN_RES = 0x1002,
+  CMD_META_LOGOUT_REQ = 0x1003,
+  CMD_META_LOGOUT_RES = 0x1004,
+  CMD_META_REGISTER_REQ = 0x1005,
+  CMD_META_REGISTER_RES = 0x1006,
+
+  // Chat (0x1100-0x11FF)
+  CMD_META_CHAT_REQ = 0x1101,
+  CMD_META_CHAT_RES = 0x1102,
+  CMD_META_CHAT_NOTIFY = 0x1103,
+
+  // File operations (0x1200-0x12FF)
+  CMD_META_UPLOAD_REQ = 0x1201,
+  CMD_META_UPLOAD_RES = 0x1202,
+  CMD_META_DOWNLOAD_REQ = 0x1203,
+  CMD_META_DOWNLOAD_RES = 0x1204,
+  CMD_META_DELETE_FILE_REQ = 0x1205,
+  CMD_META_DELETE_FILE_RES = 0x1206,
+  CMD_META_RENAME_FILE_REQ = 0x1207,
+  CMD_META_RENAME_FILE_RES = 0x1208,
+  CMD_META_MOVE_FILE_REQ = 0x1209,
+  CMD_META_MOVE_FILE_RES = 0x120A,
+  CMD_META_MKDIR_REQ = 0x120B,
+  CMD_META_MKDIR_RES = 0x120C,
+  CMD_META_RMDIR_REQ = 0x120D,
+  CMD_META_RMDIR_RES = 0x120E,
+  CMD_META_FILE_LIST_REQ = 0x120F,
+  CMD_META_FILE_LIST_RES = 0x1210,
+
+  // Friend management (0x1300-0x13FF)
+  CMD_META_ADD_FRIEND_REQ = 0x1301,
+  CMD_META_ADD_FRIEND_RES = 0x1302,
+  CMD_META_DELETE_FRIEND_REQ = 0x1303,
+  CMD_META_DELETE_FRIEND_RES = 0x1304,
+  CMD_META_FRIEND_LIST_REQ = 0x1305,
+  CMD_META_FRIEND_LIST_RES = 0x1306,
+  CMD_META_ONLINE_USERS_REQ = 0x1307,
+  CMD_META_ONLINE_USERS_RES = 0x1308,
+
+  // ==================== Data Plane Commands (0x2000-0x2FFF)
+  // ====================
+
+  // File upload (0x2000-0x20FF)
+  CMD_STORAGE_UPLOAD_CHUNK_REQ = 0x2001,
+  CMD_STORAGE_UPLOAD_CHUNK_RES = 0x2002,
+  CMD_STORAGE_UPLOAD_COMPLETE_REQ = 0x2003,
+  CMD_STORAGE_UPLOAD_COMPLETE_RES = 0x2004,
+
+  // File download (0x2100-0x21FF)
+  CMD_STORAGE_DOWNLOAD_CHUNK_REQ = 0x2101,
+  CMD_STORAGE_DOWNLOAD_CHUNK_RES = 0x2102,
+
+  // ==================== Internal RPC Commands (0x3000-0x3FFF)
+  // ====================
+
+  // Heartbeat and status (0x3000-0x30FF)
+  CMD_INTERNAL_HEARTBEAT = 0x3001,
+  CMD_INTERNAL_STATUS_REPORT = 0x3002,
+  CMD_INTERNAL_SERVER_REGISTER = 0x3003,
+
+  // File operation notifications (0x3100-0x31FF)
+  CMD_INTERNAL_UPLOAD_COMPLETE = 0x3101,
+  CMD_INTERNAL_DELETE_FILE = 0x3102,
+  CMD_INTERNAL_FILE_MOVED = 0x3103,
+
+  // Legacy aliases
+  CMD_LOGIN_REQ = CMD_META_LOGIN_REQ,
+  CMD_LOGIN_RES = CMD_META_LOGIN_RES,
+  CMD_CHAT_REQ = CMD_META_CHAT_REQ,
+  CMD_CHAT_RES = CMD_META_CHAT_RES,
+  CMD_UPLOAD_REQ = CMD_META_UPLOAD_REQ,
+  CMD_UPLOAD_RES = CMD_META_UPLOAD_RES,
+  CMD_DOWNLOAD_REQ = CMD_META_DOWNLOAD_REQ,
+  CMD_DOWNLOAD_RES = CMD_META_DOWNLOAD_RES,
 };
 
 } // namespace Protocol

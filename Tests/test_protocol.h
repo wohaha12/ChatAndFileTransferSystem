@@ -10,20 +10,22 @@ namespace Tests {
  * @details 测试通信协议的编解码、校验等功能
  */
 class ProtocolTest : public QObject {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    explicit ProtocolTest(QObject* parent = nullptr);
-    ~ProtocolTest() override;
+  explicit ProtocolTest(QObject *parent = nullptr);
+  ~ProtocolTest() override;
 
 private slots:
-    void testTransHeaderCreation();
-    void testTransHeaderSerialization();
-    void testTransHeaderDeserialization();
-    void testMagicValidation();
-    void testChecksumValidation();
-    void testCommandTypes();
-    void testProtocolBodies();
-    void testNetworkByteOrder();
+  void testTransHeader();
+  void testEndianness();
+  void testTransHeaderCreation();
+  void testTransHeaderSerialization();
+  void testTransHeaderDeserialization();
+  void testMagicValidation();
+  void testChecksumValidation();
+  void testCommandTypes();
+  void testProtocolBodies();
+  void testNetworkByteOrder();
 };
 
 } // namespace Tests

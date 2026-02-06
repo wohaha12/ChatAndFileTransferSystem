@@ -17,6 +17,7 @@ set(HEADERS
 )
 
 set(SOURCES
+    HashUtil.cpp
     PathUtil.cpp
     MemoryPool.cpp
     StringUtil.cpp

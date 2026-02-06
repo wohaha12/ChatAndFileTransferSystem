@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Test)
+find_package(Qt6 REQUIRED COMPONENTS Core Test Concurrent)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/../Common/Protocol
@@ -39,8 +39,12 @@ add_executable(tests ${TEST_SOURCES})
 target_link_libraries(tests
     Qt6::Core
     Qt6::Test
-    CommonProtocol
-    CommonUtils
+    Qt6::Concurrent
+    Protocol
+    Utils
+    StorageServerCore
+    MetaServerCore
+    MetaServerDatabase
 )
 
 enable_testing()

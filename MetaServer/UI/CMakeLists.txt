@@ -28,6 +28,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+    Protocol
 )
 
 target_include_directories(${PROJECT_NAME}
